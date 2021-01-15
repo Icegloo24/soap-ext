@@ -1,0 +1,30 @@
+{
+	"enc_type":301,
+	"enc_value":[
+		{
+			"enc_type":101,
+			"enc_value":"0",
+			"enc_name":"Test",
+			"enc_namens":"http://www.test123.uri/0"
+		},
+		{
+			"enc_type":301,
+			"enc_value":[
+				{
+					"enc_type":101,
+					"enc_value":"1",
+					"enc_name":"Test",
+					"enc_namens":"http://www.test123.uri/0"
+				}
+			],
+			"enc_stype":"Test_1",
+			"enc_ns":"http://www.test123.uri/1",
+			"enc_name":"Test",
+			"enc_namens":"http://www.test123.uri/1"
+		}
+	],
+	"enc_stype":"Test_0",
+	"enc_ns":"http://www.test123.uri/0",
+	"enc_name":"Test",
+	"enc_namens":"http://www.test123.uri/0"
+}

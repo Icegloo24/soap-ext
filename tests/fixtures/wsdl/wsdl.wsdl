@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:n0="http://www.test123.uri/0" xmlns:n1="http://www.test123.uri/1" xmlns:soapbind="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<wsdl:types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:include schemaLocation="import_controller.xsd"/>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="TestRequest">
+		<wsdl:part name="parameters" element="n0:Test_0"/>
+	</wsdl:message>
+	<wsdl:binding name="TestBinding">
+		<wsdl:operation name="Test">
+			<soapbind:operation soapAction="urn:Test" style="document"/>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="GewerbeService_2.6.1.1.1">
+		<wsdl:port name="GewerbeService" binding="bipro:GewerbeServiceBinding">
+			<soapbind:address location="https://localhost:8080/services/testservice"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

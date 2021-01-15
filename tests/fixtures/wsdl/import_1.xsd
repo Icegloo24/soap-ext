@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.test123.uri/1" xmlns:n0="http://www.test123.uri/0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<xsd:import namespace="http://www.test123.uri/0" schemaLocation="import_0.xsd"/>
+	<xsd:complexType name="Test_1" abstract="false">
+		<xsd:extension base="n0:Basis"/>
+	</xsd:complexType>
+</xsd:schema>
