@@ -13,8 +13,8 @@
 			<soapbind:operation soapAction="urn:Test" style="document"/>
 		</wsdl:operation>
 	</wsdl:binding>
-	<wsdl:service name="GewerbeService_2.6.1.1.1">
-		<wsdl:port name="GewerbeService" binding="bipro:GewerbeServiceBinding">
+	<wsdl:service name="SoapService_1.0">
+		<wsdl:port name="SoapService" binding="SoapService">
 			<soapbind:address location="https://localhost:8080/services/testservice"/>
 		</wsdl:port>
 	</wsdl:service>
