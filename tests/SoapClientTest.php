@@ -3,12 +3,12 @@ namespace tests;
 
 use PHPUnit\Framework\TestCase;
 use SoapExt\SoapClient;
-use SoapExt\Test\TestCache;
-use SoapExt\Middleware\Curl;
-use SoapExt\Middleware\RequestBuilder;
-use SoapExt\Middleware\WsdlLoader;
-use SoapExt\Middleware\RequestAdjustment;
-use SoapExt\Middleware\SignatureMaker;
+use SoapExt\Middleware\Test\TestCache;
+use SoapExt\Middleware\Native\Curl;
+use SoapExt\Middleware\Native\RequestBuilder;
+use SoapExt\Middleware\Native\WsdlLoader;
+use SoapExt\Middleware\Native\RequestAdjustment;
+use SoapExt\Middleware\Native\SignatureMaker;
 
 class SoapClientTest extends TestCase {
     
@@ -34,13 +34,7 @@ class SoapClientTest extends TestCase {
                 new RequestAdjustment(), new SignatureMaker(__DIR__."/fixtures/signing/mycert.pem", __DIR__."/fixtures/signing/privkey.pem")
             ]);
         
-        $client->__setSoapHeaders(
-            [
-                "enc_type"=>101,
-                "enc_value"=>"123",
-                "enc_name"=>"Token",
-                "enc_namens"=>"https://www.token.com"
-            ]);
+        $client->__setSoapHeaders(new \SoapVar("123", XSD_STRING, null, null, "Token", "https://www.token.com"));
         
         $client->getQuote($this->input);
         //print "\n".$client->__getLastRequest();

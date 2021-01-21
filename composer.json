@@ -1,22 +1,21 @@
 {
-    "name": "icegloo24/soap-ext",
-    "authors": [
-        {
-            "name": "Claudius Mösker",
-            "email": "c.moesker@web.de"
-        }
-    ],
-    "config" : {
-        "optimize-autoloader" : true
-    },
-    "autoload" : {
-        "psr-4" : {
-             "SoapExt\\" : "src/"
-        }
-    },
-    "require": {
-		"php": "^7.0.0",
-        "robrichards/xmlseclibs": "^3.1",
-        "phpunit/phpunit": "^6.0"
-    }
+	"name" : "icegloo24/soap-ext",
+	"authors" : [{
+			"name" : "Claudius Mösker",
+			"email" : "c.moesker@web.de"
+		}
+	],
+	"config" : {
+		"optimize-autoloader" : true
+	},
+	"autoload" : {
+		"psr-4" : {
+			"SoapExt\\" : "src/"
+		}
+	},
+	"require" : {
+		"php" : "^7.0.0",
+		"robrichards/xmlseclibs" : "^3.1",
+		"phpunit/phpunit" : "^6.0"
+	}
 }

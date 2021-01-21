@@ -1,7 +1,7 @@
 <?php
 namespace tests;
 
-use SoapExt\Middleware\SignatureMaker;
+use SoapExt\Middleware\Native\SignatureMaker;
 use PHPUnit\Framework\TestCase;
 
 class SignatureMakerTest extends TestCase {

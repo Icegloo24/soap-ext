@@ -2,7 +2,7 @@
 namespace tests;
 
 use PHPUnit\Framework\TestCase;
-use SoapExt\Middleware\Curl;
+use SoapExt\Middleware\Native\Curl;
 
 class CurlTest extends TestCase {
     

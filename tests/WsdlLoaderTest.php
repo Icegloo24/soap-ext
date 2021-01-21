@@ -2,9 +2,9 @@
 namespace tests;
 
 use PHPUnit\Framework\TestCase;
-use SoapExt\Test\TestCache;
-use SoapExt\Middleware\WsdlLoader;
-use SoapExt\Test\TestCurl;
+use SoapExt\Middleware\Test\TestCache;
+use SoapExt\Middleware\Native\WsdlLoader;
+use SoapExt\Middleware\Test\TestCurl;
 
 class WsdlLoaderTest extends TestCase {
     

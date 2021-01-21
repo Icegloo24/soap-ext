@@ -1,18 +1,20 @@
 <?php
 namespace SoapExt;
 
-use SoapExt\Middleware\Curl;
-use SoapExt\Middleware\WsdlLoader;
+use SoapExt\Middleware\MiddlewareHandler;
+use SoapExt\Middleware\Native\Curl;
+use SoapExt\Middleware\Native\WsdlLoader;
 use SoapExt\Middleware\Interfaces\CachingInterface;
 use SoapExt\Middleware\Interfaces\CurlInterface;
 use SoapExt\Middleware\Interfaces\RequestBuilderInterface;
 use SoapExt\Middleware\Interfaces\WsdlLoaderInterface;
-use SoapExt\Middleware\Cache;
-use SoapExt\Middleware\RequestBuilder;
+use SoapExt\Middleware\Native\Cache;
+use SoapExt\Middleware\Native\RequestBuilder;
 use SoapExt\Middleware\Interfaces\ValidatorInterface;
 use SoapExt\Middleware\Interfaces\SignatureMakerInterface;
 use SoapExt\Middleware\Interfaces\RequestAdjustmentInterface;
-use SoapExt\Middleware\RequestAdjustment;
+use SoapExt\Middleware\Native\RequestAdjustment;
+use SoapExt\Exceptions\SoapExtFault;
 
 final class SoapClient {
     
@@ -25,7 +27,6 @@ final class SoapClient {
     private $soap_version;
     
     private $lastRequest;
-    private $lastRequestHeaders;
     private $lastHttpHeaders;
     private $soapHeaders;
     
@@ -103,29 +104,24 @@ final class SoapClient {
         if(isset($this->signing)) {
             $this->__setLastRequest($this->signing->sign($this->__getLastRequest()));
         }
-        
+        //Preset Header
         $this->__setLastHttpHeaders(($version === SOAP_1_2)?
             'Content-Type: application/soap+xml; charset=utf-8; action="'.$action.'"':
             'Content-Type: text/xml; charset=utf-8; action="'.$action.'"');
-        
+        //DEBUG/NOCURL action
         if(!isset($this->curl) || $this->debug) {
             $this->__setLastResponse($this->__getLastRequest());
             return $this->__getLastResponse();
         }
         //Perform Curl
         if($this->curl->execute($location, $this->__getLastRequest(), [$this->__getLastHttpHeaders()])) {
-            $this->__setLastResponse($this->curl->getLastResponse());
+            $this->__setLastResponse($this->curl->getLastResponseBody());
+            $this->__setLastHttpHeaders($this->curl->getLastResponseHeader());
         }else {
-            throw new \SoapFault($this->curl->getLastError(), $this->curl->getLastErrorMessage());
+            throw new SoapExtFault($this->curl->getLastError(), $this->curl->getLastErrorMessage());
         }
         
         return $this->__getLastResponse();
-    }
-    
-    
-    public final function __soapCall($function_name, $arguments, $options = null, $input_headers = null, &$output_headers = null)
-    {
-        //return parent::__soapCall($function_name, $arguments);
     }
     
     
@@ -133,9 +129,9 @@ final class SoapClient {
     {
         if($this->requestBuilder != null) {
             $this->__setLastRequest($this->requestBuilder->buildRequest($arguments, $this->soapHeaders, $this->wsdl));
-            $this->__doRequest($this->__getLastRequest(), $this->__getLocation(), $this->__getOperations($function_name), $this->soap_version);
+            return $this->__doRequest($this->__getLastRequest(), $this->__getLocation(), $this->__getOperations($function_name), $this->soap_version);
         }else {
-            throw new \SoapFault("SOAP", "SOAP-ERROR: Couldn't load the request properly. RequestBuilder is not defined.");
+            throw new SoapExtFault("SOAP", "SOAP-ERROR: Couldn't load the request properly. RequestBuilder is not defined.");
         }
     }
     
@@ -149,13 +145,13 @@ final class SoapClient {
             if(isset($this->wsdl->getOperations()[$function_name])) {
                 return $this->wsdl->getOperations()[$function_name];
             }else {
-                throw new \SoapFault("WSDL", "SOAP-ERROR: Unable to call the SoapOperation $function_name. Operation does not exist!");
+                throw new SoapExtFault("WSDL", "SOAP-ERROR: Unable to call the SoapOperation $function_name. Operation does not exist!");
             }
         }
         if($function_name === null) {
-            return ['NO_WSDL_MODE'];
+            return [];
         }else {
-            return 'NO_WSDL_MODE';
+            return $function_name;
         }
     }
     
@@ -166,17 +162,14 @@ final class SoapClient {
             return $this->location;
         }
         if(isset($this->wsdl)) {
-            $this->wsdl->getUri();
+            return $this->wsdl->getUri();
         }
-        return 'localhost';
+        throw new SoapExtFault("HTTP", "SOAP-ERROR: Unable to obtain Location from WSDL: No WSDL is set: No Location set in Options!");
     }
     
     
     public final function __setLastRequest($value) {
         $this->lastRequest = $value;
-    }
-    public final function __setLastRequestHeaders($value) {
-        $this->lastRequestHeaders = $value;
     }
     public final function __setLastHttpHeaders($value) {
         $this->lastHttpHeaders = $value;
@@ -192,9 +185,6 @@ final class SoapClient {
     public final function __getLastRequest() {
         return $this->lastRequest;
     }
-    public final function __getLastRequestHeaders() {
-        return $this->lastRequestHeaders;
-    }
     public final function __getLastHttpHeaders() {
         return $this->lastHttpHeaders;
     }
@@ -203,7 +193,3 @@ final class SoapClient {
     }
     
 }
-
-
-define ('SOAP_1_1', 1);
-define ('SOAP_1_2', 2);

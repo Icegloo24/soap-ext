@@ -1,7 +1,7 @@
 <?php
 namespace tests;
 
-use SoapExt\Middleware\RequestBuilder;
+use SoapExt\Middleware\Native\RequestBuilder;
 use PHPUnit\Framework\TestCase;
 
 class RequestBuilderTest extends TestCase {

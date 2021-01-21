@@ -34,12 +34,12 @@ $result = $client->__getLastResponse();
 ## Extended use case:
 ```php
 use SoapExt\SoapClient;
-use SoapExt\Middleware\Cache;
-use SoapExt\Middleware\Curl;
-use SoapExt\Middleware\RequestAdjustment;
-use SoapExt\Middleware\RequestBuilder;
-use SoapExt\Middleware\SignatureMaker;
-use SoapExt\Middleware\WsdlLoader;
+use SoapExt\Middleware\Native\Cache;
+use SoapExt\Middleware\Native\Curl;
+use SoapExt\Middleware\Native\RequestAdjustment;
+use SoapExt\Middleware\Native\RequestBuilder;
+use SoapExt\Middleware\Native\SignatureMaker;
+use SoapExt\Middleware\Native\WsdlLoader;
 
 $wsdl = "any existing wsdl";
 $options = [];
@@ -66,7 +66,7 @@ This case will yield the created Request as Response! No loaded Wsdl, no Validat
 Just to check out what Request has been built and if it builds.
 ```php
 use SoapExt\SoapClient;
-use SoapExt\Middleware\RequestBuilder;
+use SoapExt\Middleware\Native\RequestBuilder;
 
 $wsdl = "any existing wsdl";
 $options = [];
@@ -117,9 +117,10 @@ $result = $client->__getLastResponse();
 - Create a Signature with the use of [RobRichards XMLSecLibs](https://github.com/robrichards/xmlseclibs).
 
 ## Todo:
+- Caching - *Caching is not working yet, still needs some improvement and configuration + testing*
 - Validation - *Need to add some Features to the Wsdl Class too and write some validation Code*
 - Soap Encoding - *(SOAP_ENC_ARRAY, XSD_...) only SOAP_ENC_OBJECT and XSD_STRING is supported yet*
-- Better Namespace Naming in RequestBuilder
+- Improve Namespace Naming in RequestBuilder
 - More Wsdl access and ability to provide all needed Data.
 - Replace $options-array with a SoapClientOptions-Class with setters and Documentation for further knowledge!
 
