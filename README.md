@@ -2,6 +2,8 @@
 
 soap-ext is a library written in PHP that seeks to replace the PHP-Native SoapClient with a SoapClient consisting of a handfull of Middleware Components, which are replaceable.
 
+The whole Client runs on a Middleware that is defined by Interfaces to enable the user to write New and replace specific Middleware-Components at will.
+
 # Requirements
 
 7.0++ due to phpunit
@@ -82,6 +84,8 @@ $client->__call($function, $input);
 
 $result = $client->__getLastResponse();
 ```
+## Use your own Middleware
+Just implement the *Interface* for the Middleware-Component you seek to write and append that to the Client.
 ## Middleware
 #### CacheInterface
 - Handles the Caching of the Wsdl!
@@ -112,7 +116,7 @@ $result = $client->__getLastResponse();
 #### RequestAdjustment
 - This actually just prints the Request to Console/Browser.
 #### Validator
-- Not implemented
+- **Not implemented**
 #### SignatureMaker
 - Create a Signature with the use of [RobRichards XMLSecLibs](https://github.com/robrichards/xmlseclibs).
 
