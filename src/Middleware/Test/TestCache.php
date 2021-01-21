@@ -34,6 +34,12 @@ class TestCache implements CachingInterface {
     {
         return $this->location.$name;
     }
+    
+    public function clearCache(): bool
+    {
+        return true;
+    }
+
 
 }
 

@@ -12,8 +12,8 @@ class Cache implements CachingInterface {
     private $lifetime;
     
     public function __construct() {
-        $this->enabled = false;
-        $this->target_dir = ini_get('soap.wsdl_cache_dir');
+        $this->enabled = true;
+        $this->target_dir = sys_get_temp_dir().DIRECTORY_SEPARATOR."WSDL_CACHE";
         $this->lifetime = 120;
     }
     
@@ -27,13 +27,20 @@ class Cache implements CachingInterface {
     
     
     public function getFile($name): string {
-        //print "\n" . $this->target_dir.DIRECTORY_SEPARATOR.'wsdl_'.md5($name).'.cache'."\n";
-        return $this->target_dir.DIRECTORY_SEPARATOR.'wsdl_'.md5($name).'.cache';
+        if(!file_exists($this->target_dir) && !is_dir($this->target_dir)) {
+            @mkdir($this->target_dir, 0777, true);
+        }
+        $filename = $this->target_dir.DIRECTORY_SEPARATOR.'wsdl_'.md5($name).'.cache';
+        if(file_exists($filename) && filemtime($filename) + $this->lifetime < time()) {
+            unlink($filename);
+        }
+        
+        return $filename;
     }
     
     
     public function hasFile($name): bool {
-        return $this->enabled && file_exists($this->getFile($name)) && filemtime($this->getFile($name)) + $this->lifetime > time();
+        return $this->enabled && file_exists($this->getFile($name));
     }
 
 
@@ -42,21 +49,36 @@ class Cache implements CachingInterface {
             if($this->hasFile($name)) {
                 unlink($this->getFile($name));
             }
+            //print "writeTo: ".$this->getFile($name);
             $file = fopen($this->getFile($name), 'w');
             file_put_contents($this->getFile($name), $content);
             fclose($file);
         }
-    }
-    
-    
-    private function createFile($name) {
-        
     }
 
     
     public function getLifetime(): int {
         return $this->lifetime;
     }
+    
+    
+    public function clearCache(): bool
+    {
+        if(is_dir($this->target_dir)) {
+            foreach(scandir($this->target_dir) as $file) {
+                if(strpos($file, 'cache')) {
+                    unlink($this->target_dir.DIRECTORY_SEPARATOR.$file);
+                }
+            }
+            foreach(scandir($this->target_dir) as $file) {
+                if(strpos($file, 'cache')) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     
 }
 

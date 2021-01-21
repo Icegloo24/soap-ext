@@ -13,4 +13,6 @@ interface CachingInterface {
     
     public function getLifetime(): int;
     
+    public function clearCache(): bool;
+    
 }
