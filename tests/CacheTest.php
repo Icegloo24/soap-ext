@@ -39,6 +39,8 @@ class CacheTest extends TestCase {
     {
         $cache = new Cache();
         
+        $cache->putContent("Hallo", "Hallo");
+        
         $this->assertTrue($cache->clearCache());
         
         $this->assertFalse($cache->hasFile("Hallo"));
