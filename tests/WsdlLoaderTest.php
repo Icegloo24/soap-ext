@@ -45,7 +45,7 @@ class WsdlLoaderTest extends TestCase {
     }
     
     
-    public function testLoadWsdlFromCacheAfterTestCurl()
+    /*public function testLoadWsdlFromCacheAfterTestCurl()
     {
         $this->loader->downloadWsdl("wsdl.wsdl", $this->curl);
         
@@ -62,7 +62,7 @@ class WsdlLoaderTest extends TestCase {
         $this->assertEquals("https://localhost:8080/services/testservice", $wsdl->getUri());
         
         $this->assertEquals(3, count($wsdl->getIncluded()));
-    }
+    }*/
     
 }
 

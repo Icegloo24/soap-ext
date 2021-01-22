@@ -10,6 +10,8 @@ class Wsdl {
     private static $NS_XML_SCHEMA = 'http://www.w3.org/2001/XMLSchema';
     private static $PFX_WSDL_SCHEMA = 'wsdl';
     private static $NS_WSDL_SCHEMA =  'http://schemas.xmlsoap.org/wsdl/';
+    private static $PFX_WSDL_SOAP = 'soapbind';
+    private static $NS_WSDL_SOAP = 'http://schemas.xmlsoap.org/wsdl/soap/';
     
     private $uri;
     
@@ -28,21 +30,27 @@ class Wsdl {
         $this->wsdl->loadXML($content);
         
         $xpath = new DOMXPath($this->wsdl);
-        $xpath->registerNamespace(self::$PFX_XML_SCHEMA, self::$NS_XML_SCHEMA);
-        $xpath->registerNamespace(self::$PFX_WSDL_SCHEMA, self::$NS_WSDL_SCHEMA);
+        $pfx_xml_schema = strlen($pfx_xml_schema = $this->wsdl->lookupPrefix(self::$NS_XML_SCHEMA))?$pfx_xml_schema:self::$PFX_XML_SCHEMA;
+        $pfx_wsdl_schema = strlen($pfx_wsdl_schema = $this->wsdl->lookupPrefix(self::$NS_WSDL_SCHEMA))?$pfx_wsdl_schema:self::$PFX_WSDL_SCHEMA;
+        
+        $xpath->registerNamespace($pfx_xml_schema, self::$NS_XML_SCHEMA);
+        $xpath->registerNamespace($pfx_wsdl_schema, self::$NS_WSDL_SCHEMA);
         // Get includes/imports
-        $query = './/'.self::$PFX_XML_SCHEMA.':include | .//'.self::$PFX_XML_SCHEMA.':import';
-        $query .= ' | .//'.self::$PFX_WSDL_SCHEMA.':include | .//'.self::$PFX_WSDL_SCHEMA.':import';
+        $query = './/'.$pfx_xml_schema.':include | .//'.$pfx_xml_schema.':import';
+        $query .= ' | .//'.$pfx_wsdl_schema.':include | .//'.$pfx_wsdl_schema.':import';
         
         $nodes = $xpath->query($query);
         if ($nodes->length > 0) {
             foreach ($nodes as $node) {
                 $location = $node->getAttribute('schemaLocation');
-                $this->toIncludes['schemaLocation'] = $location;
+                if(strlen($location)) {
+                    $this->toIncludes['schemaLocation'] = $location;
+                }
             }
         }
         // Get URI
-        $query = './/soapbind:address';
+        $pfx_wsdl_soap = strlen($pfx_wsdl_soap = $this->wsdl->lookupPrefix(self::$NS_WSDL_SOAP))?$pfx_wsdl_soap:self::$PFX_WSDL_SOAP;
+        $query = './/'.$pfx_wsdl_soap.':address';
         $nodes = $xpath->query($query);
         if ($nodes->length > 0) {
             foreach ($nodes as $node) {
@@ -67,9 +75,10 @@ class Wsdl {
         $this->included[$ns] = $dom;
         
         $xpath = new DOMXPath($dom);
-        $xpath->registerNamespace(self::$PFX_XML_SCHEMA, self::$NS_XML_SCHEMA);
+        $pfx_xml_schema = strlen($pfx_xml_schema = $this->wsdl->lookupPrefix(self::$NS_XML_SCHEMA))?$pfx_xml_schema:self::$PFX_XML_SCHEMA;
+        $xpath->registerNamespace($pfx_xml_schema, self::$NS_XML_SCHEMA);
         
-        $query = './/'.self::$PFX_XML_SCHEMA.':include | .//'.self::$PFX_XML_SCHEMA.':import';
+        $query = './/'.$pfx_xml_schema.':include | .//'.self::$PFX_XML_SCHEMA.':import';
         $nodes = $xpath->query($query);
         if ($nodes->length > 0) {
             foreach ($nodes as $node) {
@@ -122,10 +131,12 @@ class Wsdl {
         $methods = array();
         
         $xpath = new DOMXPath($this->wsdl);
-        $xpath->registerNamespace(self::$PFX_XML_SCHEMA, self::$NS_XML_SCHEMA);
-        $xpath->registerNamespace(self::$PFX_WSDL_SCHEMA, self::$NS_WSDL_SCHEMA);
+        $pfx_xml_schema = strlen($pfx_xml_schema = $this->wsdl->lookupPrefix(self::$NS_XML_SCHEMA))?$pfx_xml_schema:self::$PFX_XML_SCHEMA;
+        $pfx_wsdl_schema = strlen($pfx_wsdl_schema = $this->wsdl->lookupPrefix(self::$NS_WSDL_SCHEMA))?$pfx_wsdl_schema:self::$PFX_WSDL_SCHEMA;
+        $xpath->registerNamespace($pfx_xml_schema, self::$NS_XML_SCHEMA);
+        $xpath->registerNamespace($pfx_wsdl_schema, self::$NS_WSDL_SCHEMA);
         
-        $query = './/'.self::$PFX_WSDL_SCHEMA.':operation';
+        $query = './/'.$pfx_wsdl_schema.':operation';
         $nodes = $xpath->query($query);
         if ($nodes->length > 0) {
             foreach ($nodes as $node) {

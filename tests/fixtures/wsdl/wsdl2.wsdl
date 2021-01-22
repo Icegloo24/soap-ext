@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsd:definitions xmlns:wsd="http://schemas.xmlsoap.org/wsdl/" xmlns:n0="http://www.test123.uri/0" xmlns:n1="http://www.test123.uri/1" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<wsd:types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import schemaLocation="import_controller.xsd"/>
+		</xsd:schema>
+	</wsd:types>
+	<wsd:message name="TestRequest">
+		<wsd:part name="parameters" element="n0:Test_0"/>
+	</wsd:message>
+	<wsd:binding name="TestBinding">
+		<wsd:operation name="Test">
+			<soapbind:operation soapAction="urn:Test" style="document"/>
+		</wsd:operation>
+	</wsd:binding>
+	<wsd:service name="SoapService_1.0">
+		<wsdl:port name="SoapService" binding="SoapService">
+			<soap:address location="https://localhost:8080/services/testservice"/>
+		</wsdl:port>
+	</wsd:service>
+</wsd:definitions>
