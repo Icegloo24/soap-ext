@@ -81,10 +81,14 @@ class RequestBuilder implements RequestBuilderInterface {
     protected function appendAttributesToNode(DOMDocument &$owner, &$key, &$value)
     {
         $attribute = $owner->createAttributeNS(self::$NS_XSI, self::$PFX_XSI.":type");
-        if(!isset($this->registered_ns[$value['ns']])) {
-            $this->registerNamespacePrefix($owner, $value['ns']);
+        if(isset($value['ns'])) {
+            if(!isset($this->registered_ns[$value['ns']])) {
+                $this->registerNamespacePrefix($owner, $value['ns']);
+            }
+            $attribute->value = $this->getNamespacePrefix($value['ns']).":".$key;
+        }else {
+            $attribute->value = $key;
         }
-        $attribute->value = $this->getNamespacePrefix($value['ns']).":".$key;
         $value['node']->setAttributeNodeNS($attribute);
     }
     
@@ -122,6 +126,8 @@ class RequestBuilder implements RequestBuilderInterface {
                 if(isset($argument)) {
                     if(isset($arguments['enc_stype']) && isset($arguments['enc_ns'])) {
                         $this->attributes[$arguments['enc_stype']] = ['node'=>&$argument, 'ns'=>$arguments['enc_ns']];
+                    }else if(isset($arguments['enc_stype'])) {
+                        $this->attributes[$arguments['enc_stype']] = ['node'=>&$argument];
                     }
                     $node->appendChild($argument);
                 }

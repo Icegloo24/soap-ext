@@ -13,6 +13,7 @@
 				{
 					"enc_type":101,
 					"enc_value":"1",
+					"enc_stype":"Test_2",
 					"enc_name":"Test",
 					"enc_namens":"http://www.test123.uri/0"
 				}
