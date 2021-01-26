@@ -28,6 +28,11 @@ class TestCurl implements CurlInterface {
         return true;
     }
     
+    public function resolveUri(string $base, string $reroot): string
+    {
+        return $reroot;
+    }
+    
     public function getLastResponse(): string {
         return $this->lastResponse;
     }

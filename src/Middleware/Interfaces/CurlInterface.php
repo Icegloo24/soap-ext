@@ -5,6 +5,8 @@ interface CurlInterface {
     
     public function execute($location, $request = null, $requestHeaders = array()): bool;
     
+    public function resolveUri(string $base, string $reroot): string;
+    
     public function getLastResponse(): string;
     
     public function getLastResponseHeader(): string;

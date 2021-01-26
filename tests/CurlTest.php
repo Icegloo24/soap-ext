@@ -46,5 +46,18 @@ class CurlTest extends TestCase {
         $this->assertEmpty($this->curl->getLastResponseBody());
     }
     
+    
+    public function testResolveUri()
+    {
+        $base = "https://foo.bar/ice/cream";
+        $reroot1 = "block";
+        $reroot2 = "../fire/wind";
+        $reroot3 = "http://bar.foo/cream";
+        
+        $this->assertEquals($this->curl->resolveUri($base, $reroot1), "https://foo.bar/ice/block");
+        $this->assertEquals($this->curl->resolveUri($base, $reroot2), "https://foo.bar/fire/wind");
+        $this->assertEquals($this->curl->resolveUri($base, $reroot3), "http://bar.foo/cream");
+    }
+    
 }
 

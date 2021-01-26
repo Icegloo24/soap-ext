@@ -26,7 +26,7 @@ class WsdlLoader implements WsdlLoaderInterface {
             $this->wsdl = new Wsdl($content);
             
             foreach($this->wsdl->getNextToInclude() as $ns => $uri) {
-                $this->downloadIncluded($ns, $uri, $curl);
+                $this->downloadIncluded($ns, $curl->resolveUri($wsdl, $uri), $curl);
             }
             return $this->wsdl;
         }else {
@@ -43,7 +43,7 @@ class WsdlLoader implements WsdlLoaderInterface {
             $this->wsdl->appendNs($namespace, $content);
             
             foreach($this->wsdl->getNextToInclude() as $ns => $uri) {
-                $this->downloadIncluded($ns, $uri, $curl);
+                $this->downloadIncluded($ns, $curl->resolveUri($localisation, $uri), $curl);
             }
         }else {
             throw new SoapExtFault("HTTP", "SOAP-ERROR: Parsing WSDL: Couldn't load from '$localisation'! Http-Error: ".$curl->getLastErrorMessage());

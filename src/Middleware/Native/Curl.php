@@ -105,6 +105,25 @@ class Curl implements CurlInterface {
         return true;
     }
     
+    public function resolveUri(string $base, string $reroot): string
+    {
+        if(strpos($reroot, "https://") !== false || strpos($reroot, "http://") !== false) {
+            return $reroot;
+        }
+        $base = explode("/", $base);
+        if(strlen($reroot) > 0) {
+            array_pop($base);
+        }
+        foreach(explode("/", $reroot) as $substr) {
+            if($substr == "..") {
+                array_pop($base);
+            }else {
+                array_push($base, $substr);
+            }
+        }
+        return implode("/", $base);
+    }
+    
     public function getLastResponse(): string {
         return $this->lastResponse;
     }
