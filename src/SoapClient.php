@@ -74,7 +74,7 @@ final class SoapClient {
             if(isset($this->cache)) {
                 if(!$this->wsdlLoader->isCached($wsdl, $this->cache)) {
                     $this->wsdl = $this->wsdlLoader->downloadWsdl($wsdl, $this->curl);
-                    $this->wsdlLoader->cacheWsdl($this->cache);
+                    $this->wsdlLoader->cacheWsdl($wsdl, $this->cache);
                 }else {
                     $this->wsdl = $this->wsdlLoader->loadWsdl($wsdl, $this->cache);
                 }
