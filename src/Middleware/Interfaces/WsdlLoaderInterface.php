@@ -9,7 +9,7 @@ interface WsdlLoaderInterface {
     
     public function loadWsdl($wsdl, CachingInterface $cache): Wsdl;
     
-    public function cacheWsdl(CachingInterface $cache);
+    public function cacheWsdl($wsdl, CachingInterface $cache);
     
     public function isCached($wsdl, CachingInterface $cache): bool;
     

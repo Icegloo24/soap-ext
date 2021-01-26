@@ -20,11 +20,13 @@ class Wsdl {
     private $toIncludes;
     
     private $included;
+    private $nsMap;
     
     public function __construct(string $content)
     {
         $this->toIncludes = array();
         $this->included = array();
+        $this->nsMap = array();
         
         $this->wsdl = new DOMDocument('1.0');
         $this->wsdl->loadXML($content);
@@ -60,7 +62,7 @@ class Wsdl {
     }
     
     /**
-     * Append the fetched Content to the included DOMElements mapped by it's Namespace.
+     * Append the fetched Content to the included DOMElements mapped by it's Location.
      * 
      * @param string $content
      * @param string $ns
@@ -68,6 +70,7 @@ class Wsdl {
     public function appendNs(string $ns, string $content)
     {
         if(key_exists($ns, $this->toIncludes)) {
+            $this->nsMap[$ns] = $this->toIncludes[$ns];
             unset($this->toIncludes[$ns]);
         }
         $dom = new DOMDocument('1.0');
@@ -148,6 +151,15 @@ class Wsdl {
             }
         }
         return $methods;
+    }
+    
+    public function getWsdl(): DOMDocument
+    {
+        return $this->wsdl;
+    }
+    
+    public function getNsMap(): array {
+        return $this->nsMap;
     }
     
 }

@@ -27,6 +27,12 @@ class Cache implements CachingInterface {
     
     
     public function getFile($name): string {
+        if(strpos($name, "\\") !== false) {
+            if(file_exists($name)) {
+                return $name;
+            }
+            $name = array_pop(explode("/", $name));
+        }
         if(!file_exists($this->target_dir) && !is_dir($this->target_dir)) {
             @mkdir($this->target_dir, 0777, true);
         }
@@ -44,7 +50,7 @@ class Cache implements CachingInterface {
     }
 
 
-    public function putContent($name, $content) {
+    public function putContent($content, $name) {
         if($this->enabled) {
             if($this->hasFile($name)) {
                 unlink($this->getFile($name));

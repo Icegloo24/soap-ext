@@ -45,13 +45,15 @@ class WsdlLoaderTest extends TestCase {
     }
     
     
-    /*public function testLoadWsdlFromCacheAfterTestCurl()
+    public function testLoadWsdlFromCacheAfterTestCurl()
     {
         $this->loader->downloadWsdl("wsdl.wsdl", $this->curl);
         
         $cache = new Cache();
         
-        $this->loader->cacheWsdl($cache);
+        $this->loader->cacheWsdl("wsdl.wsdl", $cache);
+        
+        $this->loader = new WsdlLoader();
         
         $this->assertTrue($this->loader->isCached("wsdl.wsdl", $cache));
         
@@ -62,7 +64,7 @@ class WsdlLoaderTest extends TestCase {
         $this->assertEquals("https://localhost:8080/services/testservice", $wsdl->getUri());
         
         $this->assertEquals(3, count($wsdl->getIncluded()));
-    }*/
+    }
     
 }
 

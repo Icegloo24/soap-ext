@@ -88,9 +88,27 @@ class WsdlLoader implements WsdlLoaderInterface {
     }
     
     
-    public function cacheWsdl(CachingInterface $cache)
+    public function cacheWsdl($wsdl, CachingInterface $cache)
     {
-        
+        $WSDL = $this->wsdl->getWsdl()->saveXML();
+        $xsds = array();
+        foreach($this->wsdl->getIncluded() as $ns1 => $dom) {
+            foreach($this->wsdl->getNsMap() as $ns2 => $loc) {
+                if($ns1 == $ns2) {
+                    $xsds[$loc] = $dom->saveXML();
+                }
+            }
+        }
+        foreach($this->wsdl->getNsMap() as $ns => $loc) {
+            $WSDL = str_replace($loc, $cache->getFile($loc), $WSDL);
+            foreach($xsds as $filename => &$xsd) {
+                $xsd = str_replace($loc, $cache->getFile($loc), $xsd);
+            }
+        }
+        $cache->putContent($WSDL, $wsdl);
+        foreach($xsds as $filename => $xsd) {
+            $cache->putContent($xsd, $filename);
+        }
     }
 
     
