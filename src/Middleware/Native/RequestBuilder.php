@@ -49,12 +49,12 @@ class RequestBuilder implements RequestBuilderInterface {
         $env->appendChild($body);
         $dom->appendChild($env);
         
-            
+        
         /*
          * Append Attributes
          */
         foreach($this->attributes as $key => $value) {
-            $this->appendAttributesToNode($dom, $key, $value);
+            $this->appendAttributesToNode($dom, $value);
         }
         
         return $dom->saveXML();
@@ -72,22 +72,22 @@ class RequestBuilder implements RequestBuilderInterface {
     
     protected function registerNamespacePrefix(DOMDocument &$owner, string $namespace)
     {
-        $registered_ns = $owner->createAttributeNS(self::$NS_XSI, self::$PFX_XSI.":".$this->getNamespacePrefix($namespace));
+        $registered_ns = $owner->createAttribute("xmlns:".$this->getNamespacePrefix($namespace));
         $registered_ns->value = $namespace;
         $owner->firstChild->appendChild($registered_ns);
     }
     
     
-    protected function appendAttributesToNode(DOMDocument &$owner, &$key, &$value)
+    protected function appendAttributesToNode(DOMDocument &$owner, &$value)
     {
         $attribute = $owner->createAttributeNS(self::$NS_XSI, self::$PFX_XSI.":type");
         if(isset($value['ns'])) {
             if(!isset($this->registered_ns[$value['ns']])) {
                 $this->registerNamespacePrefix($owner, $value['ns']);
             }
-            $attribute->value = $this->getNamespacePrefix($value['ns']).":".$key;
+            $attribute->value = $this->getNamespacePrefix($value['ns']).":".$value['n'];
         }else {
-            $attribute->value = $key;
+            $attribute->value = $value['n'];
         }
         $value['node']->setAttributeNodeNS($attribute);
     }
@@ -103,8 +103,8 @@ class RequestBuilder implements RequestBuilderInterface {
                             throw new \SoapFault("SOAP", "SOAP-ERROR: Wrong Encoding used '101' at Argument ".$arguments['enc_name']."!");
                         }
                         if(array_key_exists('enc_namens', $arguments)) {
-                            $argument = $owner->createElementNS($arguments['enc_namens'], 
-                                            $this->getNamespacePrefix($arguments['enc_namens']).":".$arguments['enc_name'], $arguments['enc_value']);
+                            $argument = $owner->createElementNS($arguments['enc_namens'],
+                                $this->getNamespacePrefix($arguments['enc_namens']).":".$arguments['enc_name'], $arguments['enc_value']);
                         }else {
                             $argument = $owner->createElement($arguments['enc_name'], $arguments['enc_value']);
                         }
@@ -114,8 +114,8 @@ class RequestBuilder implements RequestBuilderInterface {
                             throw new \SoapFault("SOAP", "SOAP-ERROR: Wrong Encoding used '301' at Argument ".$arguments['enc_name']."!");
                         }
                         if(array_key_exists('enc_namens', $arguments)) {
-                            $argument = $owner->createElementNS($arguments['enc_namens'], 
-                                            $this->getNamespacePrefix($arguments['enc_namens']).":".$arguments['enc_name']);
+                            $argument = $owner->createElementNS($arguments['enc_namens'],
+                                $this->getNamespacePrefix($arguments['enc_namens']).":".$arguments['enc_name']);
                         }else {
                             $argument = $owner->createElement($arguments['enc_name']);
                         }
@@ -125,9 +125,9 @@ class RequestBuilder implements RequestBuilderInterface {
                 }
                 if(isset($argument)) {
                     if(isset($arguments['enc_stype']) && isset($arguments['enc_ns'])) {
-                        $this->attributes[$arguments['enc_stype']] = ['node'=>&$argument, 'ns'=>$arguments['enc_ns']];
+                        $this->attributes[] = ['node'=>&$argument, 'ns'=>$arguments['enc_ns'], 'n'=>$arguments['enc_stype']];
                     }else if(isset($arguments['enc_stype'])) {
-                        $this->attributes[$arguments['enc_stype']] = ['node'=>&$argument];
+                        $this->attributes[] = ['node'=>&$argument, 'n'=>$arguments['enc_stype']];
                     }
                     $node->appendChild($argument);
                 }
