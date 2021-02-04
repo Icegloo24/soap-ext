@@ -100,9 +100,12 @@ class WsdlLoader implements WsdlLoaderInterface {
             }
         }
         foreach($this->wsdl->getNsMap() as $ns => $loc) {
-            $WSDL = str_replace($loc, $cache->getFile($loc), $WSDL);
+            $file = $cache->getFile($loc);
+            $array = explode("\\", $file);
+            $file = array_pop($array);
+            $WSDL = str_replace($loc, $file, $WSDL);
             foreach($xsds as $filename => &$xsd) {
-                $xsd = str_replace($loc, $cache->getFile($loc), $xsd);
+                $xsd = str_replace($loc, $file, $xsd);
             }
         }
         $cache->putContent($WSDL, $wsdl);

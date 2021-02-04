@@ -36,7 +36,11 @@ class Cache implements CachingInterface {
         if(!file_exists($this->target_dir) && !is_dir($this->target_dir)) {
             @mkdir($this->target_dir, 0777, true);
         }
-        $filename = $this->target_dir.DIRECTORY_SEPARATOR.'wsdl_'.md5($name).'.cache';
+        if(strpos($name, ".cache") === false) {
+            $filename = $this->target_dir.DIRECTORY_SEPARATOR.'wsdl_'.md5($name).'.cache';
+        }else {
+            $filename = $this->target_dir.DIRECTORY_SEPARATOR.$name;
+        }
         if(file_exists($filename) && filemtime($filename) + $this->lifetime < time()) {
             unlink($filename);
         }
