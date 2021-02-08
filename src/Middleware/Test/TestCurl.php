@@ -52,5 +52,9 @@ class TestCurl implements CurlInterface {
     public function getLastErrorMessage(): string {
         return $this->lastErrorMessage;
     }
+    
+    public function getLastRequestHeader(): string {
+        return "";
+    }
 }
 

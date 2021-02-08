@@ -17,5 +17,7 @@ interface CurlInterface {
     
     public function getLastErrorMessage(): string;
     
+    public function getLastRequestHeader(): string;
+    
 }
 

@@ -36,7 +36,7 @@ class SoapClientTest extends TestCase {
         
         $client->__setSoapHeaders(new \SoapVar("123", XSD_STRING, null, null, "Token", "https://www.token.com"));
         
-        $client->getQuote($this->input);
+        $client->Test($this->input);
         //print "\n".$client->__getLastRequest();
         $this->assertNotEmpty($client->__getLastRequest());
         

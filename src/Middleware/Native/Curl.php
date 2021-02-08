@@ -143,4 +143,8 @@ class Curl implements CurlInterface {
     public function getLastErrorMessage(): string {
         return $this->lastErrorMessage;
     }
+    
+    public function getLastRequestHeader(): string {
+        return curl_getinfo($this->ch, CURLINFO_HEADER_OUT);
+    }
 }

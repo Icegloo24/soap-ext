@@ -114,7 +114,7 @@ final class SoapClient {
             return $this->__getLastResponse();
         }
         //Perform Curl
-        if($this->curl->execute($location, $this->__getLastRequest(), [$this->__getLastHttpHeaders()])) {
+        if($this->curl->execute($location, $this->__getLastRequest(), [$this->__getLastHttpHeaders(), "soapaction: \"$action\""])) {
             $this->__setLastResponse($this->curl->getLastResponseBody());
             $this->__setLastHttpHeaders($this->curl->getLastResponseHeader());
         }else {
@@ -138,7 +138,7 @@ final class SoapClient {
     
     public final function __getOperations($function_name = null)
     {
-        if($this->wsdl != null && $this->wsdl instanceof WsdlLoaderInterface) {
+        if($this->wsdl != null && $this->wsdl instanceof Wsdl) {
             if($function_name === null) {
                 return $this->wsdl->getOperations();
             }

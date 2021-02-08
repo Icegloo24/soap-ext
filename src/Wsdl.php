@@ -146,6 +146,8 @@ class Wsdl {
                 foreach($node->childNodes as $child) {
                     if($child->hasAttributes() && $child->getAttribute('soapAction') != null) {
                         $methods[$node->getAttribute('name')] = $child->getAttribute('soapAction');
+                    }elseif($child->hasAttributes() && $child->getAttribute('message') != null) {
+                        $methods[$node->getAttribute('name')] = $child->getAttribute('message');
                     }
                 }
             }
