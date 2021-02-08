@@ -104,15 +104,14 @@ Just implement the *Interface* for the Middleware-Component you seek to write an
 
 ## Native Middleware
 #### Cache
-- Should ask the PHP ini for the default Cache Location.
-- **Actually not working**
+- Places cached Data in the usual /tmp Filesystem.
+- Cache can be cleared via function.
 #### Curl
 - Takes several Arguments and uses the native curl_lib to execute.
 #### RequestBuilder
 - Is creating the XML File with the use of DOMDocument.
 #### WsdlLoader
 - Can download the wsdl or load from cache.
-- **Save to cache is acually not implemented.**
 #### RequestAdjustment
 - This actually just prints the Request to Console/Browser.
 #### Validator
