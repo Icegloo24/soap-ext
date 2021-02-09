@@ -6,6 +6,32 @@ use SoapExt\Middleware\Interfaces\CurlInterface;
 class Curl implements CurlInterface {
     
     const USER_AGENT = 'PHP-SOAP/\Soap-Ext\SoapClient';
+    const ERROR_MAP = [
+        1=>'PROTOCOL',
+        3=>'FORMAT',
+        5=>'CURL',
+        6=>'CURL',
+        7=>'CURL',
+        9=>'CURL',
+        28=>'TIMEOUT',
+        35=>'CURL',
+        41=>'COMPRESS',
+        51=>'VERIFICATION',
+        52=>'EMPTY',
+        53=>'SSL',
+        54=>'SSL',
+        55=>'CURL',
+        56=>'EMPTY',
+        58=>'SSL',
+        59=>'SSL',
+        60=>'SSL',
+        61=>'ENCODING',
+        65=>'CURL',
+        66=>'SSL',
+        67=>'SSL',
+        77=>'SSL',
+        80=>'SSL',
+    ];
     
     private $debug = false;
     
@@ -93,7 +119,7 @@ class Curl implements CurlInterface {
         $this->lastResponse = curl_exec($this->ch);
         
         if($this->lastResponse === false) {
-            $this->lastError = "HTTP";
+            $this->lastError = isset(self::ERROR_MAP[curl_errno($this->ch)])?self::ERROR_MAP[curl_errno($this->ch)]:"HTTP";
             $this->lastErrorMessage = curl_error($this->ch);
             return false;
         }

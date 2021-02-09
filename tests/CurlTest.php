@@ -40,7 +40,7 @@ class CurlTest extends TestCase {
         
         $this->assertNotEmpty($this->curl->getLastError());
         $this->assertNotEmpty($this->curl->getLastErrorMessage());
-        $this->assertEquals("HTTP", $this->curl->getLastError());
+        $this->assertEquals("TIMEOUT", $this->curl->getLastError());
         $this->assertEmpty($this->curl->getLastResponse());
         $this->assertEmpty($this->curl->getLastResponseHeader());
         $this->assertEmpty($this->curl->getLastResponseBody());
