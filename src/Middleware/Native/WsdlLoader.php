@@ -61,6 +61,7 @@ class WsdlLoader implements WsdlLoaderInterface {
                     $this->loadIncluded($ns, $uri, $cache);
                 }
             }else {
+                $cache->clearCache();
                 throw new SoapExtFault("WSDL", "SOAP-ERROR: Parsing WSDL: Couldn't load WSDL '$wsdl' from Cache as the file seems not to be cached.");
             }
         }
@@ -77,6 +78,7 @@ class WsdlLoader implements WsdlLoaderInterface {
                 $this->loadIncluded($ns, $uri, $cache);
             }
         }else {
+            $cache->clearCache();
             throw new SoapExtFault("WSDL", "SOAP-ERROR: Parsing WSDL: Couldn't load Schema '$localisation' from Cache as the file seems not to be cached.");
         }
     }
@@ -90,27 +92,32 @@ class WsdlLoader implements WsdlLoaderInterface {
     
     public function cacheWsdl($wsdl, CachingInterface $cache)
     {
-        $WSDL = $this->wsdl->getWsdl()->saveXML();
-        $xsds = array();
-        foreach($this->wsdl->getIncluded() as $ns1 => $dom) {
-            foreach($this->wsdl->getNsMap() as $ns2 => $loc) {
-                if($ns1 == $ns2) {
-                    $xsds[$loc] = $dom->saveXML();
+        try {
+            $WSDL = $this->wsdl->getWsdl()->saveXML();
+            $xsds = array();
+            foreach($this->wsdl->getIncluded() as $ns1 => $dom) {
+                foreach($this->wsdl->getNsMap() as $ns2 => $loc) {
+                    if($ns1 == $ns2) {
+                        $xsds[$loc] = $dom->saveXML();
+                    }
                 }
             }
-        }
-        foreach($this->wsdl->getNsMap() as $ns => $loc) {
-            $file = $cache->getFile($loc);
-            $array = explode("\\", $file);
-            $file = array_pop($array);
-            $WSDL = str_replace($loc, $file, $WSDL);
-            foreach($xsds as $filename => &$xsd) {
-                $xsd = str_replace($loc, $file, $xsd);
+            foreach($this->wsdl->getNsMap() as $ns => $loc) {
+                $file = $cache->getFile($loc);
+                $array = explode("\\", $file);
+                $file = array_pop($array);
+                $WSDL = str_replace($loc, $file, $WSDL);
+                foreach($xsds as $filename => &$xsd) {
+                    $xsd = str_replace($loc, $file, $xsd);
+                }
             }
-        }
-        $cache->putContent($WSDL, $wsdl);
-        foreach($xsds as $filename => $xsd) {
-            $cache->putContent($xsd, $filename);
+            $cache->putContent($WSDL, $wsdl);
+            foreach($xsds as $filename => $xsd) {
+                $cache->putContent($xsd, $filename);
+            }
+        }catch(\Exception $e) {
+            $cache->clearCache();
+            throw $e;
         }
     }
 
