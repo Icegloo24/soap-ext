@@ -120,7 +120,6 @@ Just implement the *Interface* for the Middleware-Component you seek to write an
 - Create a Signature with the use of [RobRichards XMLSecLibs](https://github.com/robrichards/xmlseclibs).
 
 ## Todo:
-- Caching - *Caching is not working yet, still needs some improvement and configuration + testing*
 - Validation - *Need to add some Features to the Wsdl Class too and write some validation Code*
 - Soap Encoding - *(SOAP_ENC_ARRAY, XSD_...) only SOAP_ENC_OBJECT and XSD_STRING is supported yet*
 - Improve Namespace Naming in RequestBuilder
