@@ -10,10 +10,12 @@ class SignatureMaker implements SignatureMakerInterface {
     
     private $certificate;
     private $privkey;
+    private $passphrase;
     
-    public function __construct($certificate, $privkey) {
+    public function __construct($certificate, $privkey, $passphrase = "") {
         $this->certificate = $certificate;
         $this->privkey = $privkey;
+        $this->passphrase = $passphrase;
     }
     
     public function sign(string $request): string
@@ -29,15 +31,15 @@ class SignatureMaker implements SignatureMakerInterface {
             'algorithm'=>XMLSecurityDSig::SHA1,
             //'include_ns'=>'SOAP-ENV ns1 ns2 wsu',
             /*'arOptions'=>array(
-                'overwrite'=>false,
-                'force_uri'=>false,
-                'include_ns:Body'=>'ns1 ns2',
-                'include_ns:Timestamp'=>'wsse SOAP-ENV ns1 ns2',
-                'include_ns:BinarySecurityToken'=>''
-            )*/
+             'overwrite'=>false,
+             'force_uri'=>false,
+             'include_ns:Body'=>'ns1 ns2',
+             'include_ns:Timestamp'=>'wsse SOAP-ENV ns1 ns2',
+             'include_ns:BinarySecurityToken'=>''
+             )*/
         );
         $pKey = new XMLSecurityKey(XMLSecurityKey::RSA_SHA1, array('type'=>'private'));
-        $pKey->passphrase = '';
+        $pKey->passphrase = $this->passphrase;
         $pKey->loadKey($this->privkey, true, false);
         
         $dsig->signSoapDoc($pKey, $options);
@@ -46,6 +48,6 @@ class SignatureMaker implements SignatureMakerInterface {
         
         return $dsig->saveXML();
     }
-
+    
 }
 
