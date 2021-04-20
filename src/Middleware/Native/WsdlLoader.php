@@ -40,9 +40,8 @@ class WsdlLoader implements WsdlLoaderInterface {
         if($curl->execute($localisation)) {
             
             $content = $curl->getLastResponseBody();
-            $this->wsdl->appendNs($namespace, $content);
             
-            foreach($this->wsdl->getNextToInclude() as $ns => $uri) {
+            foreach($this->wsdl->appendNs($namespace, $content) as $ns => $uri) {
                 $this->downloadIncluded($ns, $curl->resolveUri($localisation, $uri), $curl);
             }
         }else {
@@ -72,9 +71,7 @@ class WsdlLoader implements WsdlLoaderInterface {
     private function loadIncluded($namespace, $localisation, CachingInterface $cache)
     {
         if($cache->hasFile($localisation)) {
-            $this->wsdl->appendNs($namespace, $cache->getContent($localisation));
-            
-            foreach($this->wsdl->getNextToInclude() as $ns => $uri) {
+            foreach($this->wsdl->appendNs($namespace, $cache->getContent($localisation)) as $ns => $uri) {
                 $this->loadIncluded($ns, $uri, $cache);
             }
         }else {

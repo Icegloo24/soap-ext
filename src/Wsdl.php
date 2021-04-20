@@ -81,6 +81,7 @@ class Wsdl {
         $pfx_xml_schema = strlen($pfx_xml_schema = $this->wsdl->lookupPrefix(self::$NS_XML_SCHEMA))?$pfx_xml_schema:self::$PFX_XML_SCHEMA;
         $xpath->registerNamespace($pfx_xml_schema, self::$NS_XML_SCHEMA);
         
+        $includes = [];
         $query = './/'.$pfx_xml_schema.':include | .//'.self::$PFX_XML_SCHEMA.':import';
         $nodes = $xpath->query($query);
         if ($nodes->length > 0) {
@@ -89,9 +90,11 @@ class Wsdl {
                 $namespace = $node->getAttribute('namespace');
                 if(!key_exists($namespace, $this->included)) {
                     $this->toIncludes[$namespace] = $location;
+                    $includes[$namespace] = $location;
                 }
             }
         }
+        return $includes;
     }
     
     /**
