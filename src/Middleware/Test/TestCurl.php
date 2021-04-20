@@ -2,8 +2,12 @@
 namespace SoapExt\Middleware\Test;
 
 use SoapExt\Middleware\Interfaces\CurlInterface;
+use SoapExt\Middleware\Tools\UriResolver;
 
-class TestCurl implements CurlInterface {
+class TestCurl implements CurlInterface
+{
+    
+    use UriResolver;
     
     private $ch;
     
@@ -30,7 +34,7 @@ class TestCurl implements CurlInterface {
     
     public function resolveUri(string $base, string $reroot): string
     {
-        return $reroot;
+        return $this->resolve($base, $reroot);
     }
     
     public function getLastResponse(): string {

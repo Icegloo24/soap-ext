@@ -2,8 +2,12 @@
 namespace SoapExt\Middleware\Native;
 
 use SoapExt\Middleware\Interfaces\CurlInterface;
+use SoapExt\Middleware\Tools\UriResolver;
 
-class Curl implements CurlInterface {
+class Curl implements CurlInterface
+{
+    
+    use UriResolver;
     
     const USER_AGENT = 'PHP-SOAP/\Soap-Ext\SoapClient';
     const ERROR_MAP = [
@@ -133,21 +137,7 @@ class Curl implements CurlInterface {
     
     public function resolveUri(string $base, string $reroot): string
     {
-        if(strpos($reroot, "https://") !== false || strpos($reroot, "http://") !== false) {
-            return $reroot;
-        }
-        $base = explode("/", $base);
-        if(strlen($reroot) > 0) {
-            array_pop($base);
-        }
-        foreach(explode("/", $reroot) as $substr) {
-            if($substr == "..") {
-                array_pop($base);
-            }else {
-                array_push($base, $substr);
-            }
-        }
-        return implode("/", $base);
+        return $this->resolve($base, $reroot);
     }
     
     public function getLastResponse(): string {
