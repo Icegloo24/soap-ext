@@ -115,15 +115,13 @@ Just implement the *Interface* for the Middleware-Component you seek to write an
 #### RequestAdjustment
 - This actually just prints the Request to Console/Browser.
 #### Validator
-- **Not implemented**
+- Can validate ComplexTypes of Requests and the loose structure against the wsdl as well as Enumerations(SimpleTypes). Also included some Error handling!
 #### SignatureMaker
 - Create a Signature with the use of [RobRichards XMLSecLibs](https://github.com/robrichards/xmlseclibs).
 
 ## Todo:
-- Validation - *Need to add some Features to the Wsdl Class too and write some validation Code*
 - Soap Encoding - *(SOAP_ENC_ARRAY, XSD_...) only SOAP_ENC_OBJECT and XSD_STRING is supported yet*
 - Improve Namespace Naming in RequestBuilder
-- More Wsdl access and ability to provide all needed Data.
 - Replace $options-array with a SoapClientOptions-Class with setters and Documentation for further knowledge!
 
 There are still many more things i need to complete for this library. Feel free to Start Issues and/or make Pull Request if you like to contribute.
