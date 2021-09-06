@@ -32,7 +32,7 @@ final class SoapClient {
     
     private $lastResponse;
     
-    public final function __construct($wsdl, array $options = array(), $middleware = null) 
+    public final function __construct($wsdl, array $options = array(), $middleware = null)
     {
         $this->debug = isset($options['debug'])?$options['debug']:false;
         $this->location = isset($options['location'])?$options['location']:null;
@@ -98,7 +98,9 @@ final class SoapClient {
         }
         //Perform Validation
         if(isset($this->validator)) {
-            $this->validator->validate($this->__getLastRequest(), $this->wsdlLoader);
+            if(!$this->validator->validate($this->__getLastRequest(), $this->wsdlLoader)) {
+                throw new SoapExtFault('SOAP', 'SOAP-ERROR: Validation failed! Check Validator->getErrors() to find out more!');
+            }
         }
         //Perform Signing
         if(isset($this->signing)) {

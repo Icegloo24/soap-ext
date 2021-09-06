@@ -2,9 +2,16 @@
 namespace SoapExt;
 
 use DOMDocument;
+use DOMElement;
 use DOMXPath;
+use SoapExt\Middleware\Wsdl\AbstractType;
+use SoapExt\Middleware\Wsdl\Schema;
+use SoapExt\Middleware\Interfaces\ValidatorInterface;
+use SoapExt\Middleware\Tools\TypeExtracter;
 
 class Wsdl {
+    
+    use TypeExtracter;
     
     private static $PFX_XML_SCHEMA = 'xsd';
     private static $NS_XML_SCHEMA = 'http://www.w3.org/2001/XMLSchema';
@@ -22,11 +29,14 @@ class Wsdl {
     private $included;
     private $nsMap;
     
+    private $namespaceElements;
+    
     public function __construct(string $content)
     {
-        $this->toIncludes = array();
-        $this->included = array();
-        $this->nsMap = array();
+        $this->toIncludes = [];
+        $this->included = [];
+        $this->nsMap = [];
+        $this->namespaceElements = [];
         
         $this->wsdl = new DOMDocument('1.0');
         $this->wsdl->loadXML($content);
@@ -63,7 +73,7 @@ class Wsdl {
     
     /**
      * Append the fetched Content to the included DOMElements mapped by it's Location.
-     * 
+     *
      * @param string $content
      * @param string $ns
      */
@@ -76,6 +86,7 @@ class Wsdl {
         $dom = new DOMDocument('1.0');
         $dom->loadXML($content);
         $this->included[$ns] = $dom;
+        $this->namespaceElements[$ns] = new Schema($ns, $dom);
         
         $xpath = new DOMXPath($dom);
         $pfx_xml_schema = strlen($pfx_xml_schema = $this->wsdl->lookupPrefix(self::$NS_XML_SCHEMA))?$pfx_xml_schema:self::$PFX_XML_SCHEMA;
@@ -99,7 +110,7 @@ class Wsdl {
     
     /**
      * Returns the Soapbind Adress
-     * 
+     *
      * @return string
      */
     public function getUri(): string {
@@ -108,7 +119,7 @@ class Wsdl {
     
     /**
      * Returns all Included Schemas mapped by their Namespaces. [ns(string)=>schema(DOM)]
-     * 
+     *
      * @return array
      */
     public function getIncluded(): array {
@@ -117,7 +128,7 @@ class Wsdl {
     
     /**
      * Returns one [key=>value] pair of the next Namespace=>SchemaLocation to include into the Wsdl.
-     * 
+     *
      * @return array
      */
     public function getNextToInclude(): array {
@@ -129,7 +140,7 @@ class Wsdl {
     
     /**
      * Returns all Soap Actions mapped as [name=>soapAction]
-     * 
+     *
      * @return array
      */
     public function getOperations(): array
@@ -165,6 +176,29 @@ class Wsdl {
     
     public function getNsMap(): array {
         return $this->nsMap;
+    }
+    
+    public function getContent(string $ns, string $name):AbstractType
+    {
+        return $this->namespaceElements[$ns]->getContent($name);
+    }
+    
+    public function link()
+    {
+        foreach($this->namespaceElements as &$schema) {
+            $schema->link($this);
+        }
+    }
+    
+    public function validate(DOMElement $element, ValidatorInterface $validator):bool
+    {
+        $valide = true;
+        foreach($element->childNodes as $child) {
+            if($child->localName != '') {
+                $valide = $valide && $this->getContent($this->getTypeNs($child), $this->getType($child))->validate($child, $validator);
+            }
+        }//echo json_encode($validator->getErrors())."\n\n";
+        return $valide;
     }
     
 }

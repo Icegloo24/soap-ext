@@ -2,12 +2,16 @@
 <xsd:schema xmlns="http://www.test123.uri/0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 	<xsd:complexType name="Test_0" abstract="false">
 		<xsd:complexContent>
-			<xsd:sequence><xsd:element name="Test" type="Test" nillable="true" minOccurs="0" maxOccurs="1"/></xsd:sequence>
+			<xsd:sequence>
+				<xsd:element name="Test" type="Test" nillable="true" minOccurs="0" maxOccurs="1"/>
+			</xsd:sequence>
 		</xsd:complexContent>
 	</xsd:complexType>
 	<xsd:complexType name="Base" abstract="true">
 		<xsd:complexContent>
-			<xsd:sequence><xsd:element name="Test" type="Test" nillable="true" minOccurs="1" maxOccurs="1"/></xsd:sequence>
+			<xsd:sequence>
+				<xsd:element name="Test" type="Test" nillable="true" minOccurs="1" maxOccurs="1"/>
+			</xsd:sequence>
 		</xsd:complexContent>
 	</xsd:complexType>
 	<xsd:simpleType name="Test">

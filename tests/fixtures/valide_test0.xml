@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns0="http://www.test123.uri/0" xmlns:ns1="http://www.test123.uri/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<SOAP-ENV:Body xmlns:ns0="http://www.test123.uri/0" xmlns:ns1="http://www.test123.uri/1">
+		<ns1:Test xmlns:ns0="http://www.test123.uri/0" xmlns:ns1="http://www.test123.uri/1" xsi:type="ns1:Test_1">
+			<ns0:Test xmlns:ns0="http://www.test123.uri/0" xsi:type="ns0:Test">0</ns0:Test>
+			<ns1:Test xmlns:ns0="http://www.test123.uri/0" xmlns:ns1="http://www.test123.uri/1" xsi:type="ns0:Test_0">
+				<ns0:Test xmlns:ns0="http://www.test123.uri/0" xsi:type="ns0:Test">1</ns0:Test>
+			</ns1:Test>
+		</ns1:Test>
+	</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

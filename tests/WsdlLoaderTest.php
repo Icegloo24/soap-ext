@@ -66,23 +66,5 @@ class WsdlLoaderTest extends TestCase {
         $this->assertEquals(3, count($wsdl->getIncluded()));
     }
     
-    
-    /*public function testLoadWsdlFromCacheAndValidate()
-    {
-        $this->loader->downloadWsdl("wsdl.wsdl", $this->curl);
-        
-        $cache = new Cache();
-        
-        $this->loader->cacheWsdl("wsdl.wsdl", $cache);
-        
-        $cache->getFile("wsdl.wsdl");
-        
-        $dom = new \DOMDocument();
-        $dom->loadXML(file_get_contents(__DIR__."/fixtures/expected_test0.xml"));
-        
-        //$dom->schemaValidate(__DIR__."/fixtures/wsdl/import_controller.xsd");
-        $dom->schemaValidate($cache->getFile("import_controller.xsd"));
-    }*/
-    
 }
 

@@ -28,6 +28,7 @@ class WsdlLoader implements WsdlLoaderInterface {
             foreach($this->wsdl->getNextToInclude() as $ns => $uri) {
                 $this->downloadIncluded($ns, $curl->resolveUri($wsdl, $uri), $curl);
             }
+            $this->wsdl->link();
             return $this->wsdl;
         }else {
             throw new SoapExtFault("HTTP", "SOAP-ERROR: Parsing WSDL: Couldn't load from '$wsdl'! ".$curl->getLastError().": ".$curl->getLastErrorMessage());
@@ -52,13 +53,14 @@ class WsdlLoader implements WsdlLoaderInterface {
     
     public function loadWsdl($wsdl, CachingInterface $cache): Wsdl
     {
-        if($cache != null && $this->wsdl == null) { 
+        if($cache != null && $this->wsdl == null) {
             if($cache->hasFile($wsdl)) {
                 $this->wsdl = new Wsdl($cache->getContent($wsdl));
                 
                 foreach($this->wsdl->getNextToInclude() as $ns => $uri) {
                     $this->loadIncluded($ns, $uri, $cache);
                 }
+                $this->wsdl->link();
             }else {
                 $cache->clearCache();
                 throw new SoapExtFault("WSDL", "SOAP-ERROR: Parsing WSDL: Couldn't load WSDL '$wsdl' from Cache as the file seems not to be cached.");
@@ -117,7 +119,7 @@ class WsdlLoader implements WsdlLoaderInterface {
             throw $e;
         }
     }
-
+    
     
 }
 

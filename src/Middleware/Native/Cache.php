@@ -52,8 +52,8 @@ class Cache implements CachingInterface {
     public function hasFile($name): bool {
         return $this->enabled && file_exists($this->getFile($name));
     }
-
-
+    
+    
     public function putContent($content, $name) {
         if($this->enabled) {
             if($this->hasFile($name)) {
@@ -65,7 +65,7 @@ class Cache implements CachingInterface {
             fclose($file);
         }
     }
-
+    
     
     public function getLifetime(): int {
         return $this->lifetime;
@@ -88,7 +88,7 @@ class Cache implements CachingInterface {
         }
         return true;
     }
-
+    
     
 }
 
