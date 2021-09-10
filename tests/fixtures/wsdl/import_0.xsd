@@ -20,4 +20,13 @@
 			<xsd:enumeration value="1"/>
 		</xsd:restriction>
 	</xsd:simpleType>
+	<xsd:complexType name="Test_9" abstract="true">
+		<xsd:complexContent>
+			<xsd:extension base="xsd:string">
+				<xsd:sequence>
+					<xsd:element name="Test" type="n0:Test_0" nillable="true" minOccurs="0" maxOccurs="1"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
 </xsd:schema>

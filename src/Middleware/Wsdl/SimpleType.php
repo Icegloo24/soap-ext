@@ -8,21 +8,21 @@ use DOMElement;
 class SimpleType extends AbstractType
 {
     
-    private $extension;
+    private $restriction;
     private $enumerations;
     
     public function __construct(DOMElement $complex, $ns)
     {
         parent::__construct($complex, $ns);
-        $node = $complex->getElementsByTagName('extension')->item(0);
+        $node = $complex->getElementsByTagName('restriction')->item(0);
         if(null != $node) {
             foreach($node->attributes as $attr) {
                 if($attr->name == 'base') {
                     if(strpos($attr->nodeValue, ':')) {
                         $splitted = explode(':', $attr->nodeValue);
-                        $this->extension = ['ns'=>$complex->lookupNamespaceUri($splitted[0]), 'name'=>$splitted[1]];
+                        $this->restriction = ['ns'=>$complex->lookupNamespaceUri($splitted[0]), 'name'=>$splitted[1]];
                     }else {
-                        $this->extension = ['ns'=>$this->ns, 'name'=>$attr->nodeValue];
+                        $this->restriction = ['ns'=>$this->ns, 'name'=>$attr->nodeValue];
                     }
                 }
             }
@@ -57,8 +57,8 @@ class SimpleType extends AbstractType
     
     public function link(Wsdl $wsdl)
     {
-        if(isset($this->extension)) {
-            $this->extension = $wsdl->getContent($this->extension['ns'], $this->extension['name']);
+        if(isset($this->restriction)) {
+            $this->restriction = $wsdl->getContent($this->restriction['ns'], $this->restriction['name']);
         }
     }
 

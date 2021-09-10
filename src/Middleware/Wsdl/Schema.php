@@ -11,17 +11,21 @@ class Schema
     
     private $content;
     
-    public function __construct(string $ns, DOMDocument $doc)
+    public function __construct(string $ns, DOMDocument $doc=null)
     {
         $this->ns = $ns;
         $this->content = [];
-        foreach($doc->getElementsByTagName("complexType") as $complex) {
-            $complexType = new ComplexType($complex, $this->ns);
-            $this->content[$complexType->getName()] = $complexType;
-        }
-        foreach($doc->getElementsByTagName("simpleType") as $complex) {
-            $complexType = new SimpleType($complex, $this->ns);
-            $this->content[$complexType->getName()] = $complexType;
+        if($doc != null) {
+            foreach($doc->getElementsByTagName("complexType") as $complex) {
+                $complexType = new ComplexType($complex, $this->ns);
+                $this->content[$complexType->getName()] = $complexType;
+            }
+            foreach($doc->getElementsByTagName("simpleType") as $complex) {
+                $complexType = new SimpleType($complex, $this->ns);
+                $this->content[$complexType->getName()] = $complexType;
+            }
+        }else {
+            $this->content['string'] = new BaseType('string');
         }
     }
     

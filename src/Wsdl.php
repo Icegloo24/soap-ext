@@ -36,7 +36,7 @@ class Wsdl {
         $this->toIncludes = [];
         $this->included = [];
         $this->nsMap = [];
-        $this->namespaceElements = [];
+        $this->namespaceElements = ['http://www.w3.org/2001/XMLSchema'=>new Schema('http://www.w3.org/2001/XMLSchema')];
         
         $this->wsdl = new DOMDocument('1.0');
         $this->wsdl->loadXML($content);
