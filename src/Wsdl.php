@@ -178,9 +178,11 @@ class Wsdl {
         return $this->nsMap;
     }
     
-    public function getContent(string $ns, string $name):AbstractType
+    public function getContent(string $ns, string $name):?AbstractType
     {
-        return $this->namespaceElements[$ns]->getContent($name);
+        if(isset($this->namespaceElements[$ns])) {
+            return $this->namespaceElements[$ns]->getContent($name);
+        }return null;
     }
     
     public function link()

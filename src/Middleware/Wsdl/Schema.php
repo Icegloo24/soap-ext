@@ -38,7 +38,7 @@ class Schema
     
     public function getContent(string $name):AbstractType
     {
-        return $this->content[$name];
+        return $this->content[$name]??null;
     }
     
     
