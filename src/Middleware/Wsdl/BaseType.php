@@ -24,13 +24,15 @@ class BaseType extends AbstractType
             case 'string':
                 if(count($element->nodeValue) > 0 && is_string($element->nodeValue)) {
                     return true;
-                }
-                return false;
+                }return false;
             case 'decimal':
                 if(count($element->nodeValue) > 0 && is_numeric($element->nodeValue)) {
                     return true;
-                }
-                return false;
+                }return false;
+            case 'int':
+                if(count($element->nodeValue) > 0 && is_int($element->nodeValue)) {
+                    return true;
+                }return false;
             default:
                 return false;
         }

@@ -27,6 +27,7 @@ class Schema
         }else {
             $this->content['string'] = new BaseType('string');
             $this->content['decimal'] = new BaseType('decimal');
+            $this->content['int'] = new BaseType('int');
         }
     }
     
