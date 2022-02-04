@@ -97,8 +97,8 @@ final class SoapClient {
             $this->__setLastRequest($this->requestAdjustment->modifyRequest($this->__getLastRequest()));
         }
         //Perform Validation
-        if(isset($this->validator)) {
-            if(!$this->validator->validate($this->__getLastRequest(), $this->wsdlLoader)) {
+        if(isset($this->validator) && isset($this->wsdl)) {
+            if(!$this->validator->validate($this->__getLastRequest(), $this->wsdl)) {
                 throw new SoapExtFault('SOAP', 'SOAP-ERROR: Validation failed! Check Validator->getErrors() to find out more!');
             }
         }
