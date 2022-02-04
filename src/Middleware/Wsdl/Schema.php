@@ -25,12 +25,9 @@ class Schema
                 $this->content[$complexType->getName()] = $complexType;
             }
         }else {
-            $this->content['string'] = new BaseType('string');
-            $this->content['decimal'] = new BaseType('decimal');
-            $this->content['int'] = new BaseType('int');
-            $this->content['integer'] = new BaseType('integer');
-            $this->content['bool'] = new BaseType('bool');
-            $this->content['boolean'] = new BaseType('boolean');
+            foreach(BaseType::$DATA_TYPES as $type) {
+                $this->content[$type] = new BaseType($type);
+            }
         }
     }
     

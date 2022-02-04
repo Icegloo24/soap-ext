@@ -8,6 +8,13 @@ use DOMElement;
 class BaseType extends AbstractType
 {
     
+    public static $DATA_TYPES = [
+        'boolean', 'bool', 'integer', 'int', 'decimal', 'string', 'duration', 'dateTime', 'date', 'time', 
+        'anyType', 'anySimpleType', 'gYearMonth', 'gYear', 'gMonthDay', 'gDay', 'Month', 
+        'base64Binary', 'hexBinary', 'anyUri', 'normalizedString', 'token', 'NMTOKEN', 
+        'Name', 'language', 'NCName', 'ENTITY', 'IDREF', 'ID', 'NMTokens', 'Entities', 'IDREFS'
+    ];
+    
     private $type;
     
     public function __construct(string $type)
@@ -39,8 +46,12 @@ class BaseType extends AbstractType
                 if(count($element->nodeValue) > 0 && is_bool($element->nodeValue)) {
                     return true;
                 }return false;
+            case 'boolean':
+                if(count($element->nodeValue) > 0 && is_bool($element->nodeValue)) {
+                    return true;
+                }return false;
             default:
-                return false;
+                return true;
         }
     }
 
