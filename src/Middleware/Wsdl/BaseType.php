@@ -26,6 +26,11 @@ class BaseType extends AbstractType
                     return true;
                 }
                 return false;
+            case 'decimal':
+                if(count($element->nodeValue) > 0 && is_numeric($element->nodeValue)) {
+                    return true;
+                }
+                return false;
             default:
                 return false;
         }
