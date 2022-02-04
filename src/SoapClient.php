@@ -190,6 +190,9 @@ final class SoapClient {
     public final function __getLastHttpHeaders() {
         return $this->lastHttpHeaders;
     }
+    public final function __getLastRequestHttpHeaders() {
+        return $this->curl->getLastRequestHeader();
+    }
     public final function __getLastResponse() {
         return $this->lastResponse;
     }
