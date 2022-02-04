@@ -30,7 +30,13 @@ class BaseType extends AbstractType
                     return true;
                 }return false;
             case 'int':
+            case 'integer':
                 if(count($element->nodeValue) > 0 && is_int($element->nodeValue)) {
+                    return true;
+                }return false;
+            case 'bool':
+            case 'boolean':
+                if(count($element->nodeValue) > 0 && is_bool($element->nodeValue)) {
                     return true;
                 }return false;
             default:

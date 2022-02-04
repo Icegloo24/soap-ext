@@ -28,6 +28,9 @@ class Schema
             $this->content['string'] = new BaseType('string');
             $this->content['decimal'] = new BaseType('decimal');
             $this->content['int'] = new BaseType('int');
+            $this->content['integer'] = new BaseType('integer');
+            $this->content['bool'] = new BaseType('bool');
+            $this->content['boolean'] = new BaseType('boolean');
         }
     }
     
