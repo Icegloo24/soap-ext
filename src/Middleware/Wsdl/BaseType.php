@@ -11,7 +11,7 @@ class BaseType extends AbstractType
     public static $DATA_TYPES = [
         'boolean', 'bool', 'integer', 'int', 'decimal', 'string', 'duration', 'dateTime', 'date', 'time', 
         'anyType', 'anySimpleType', 'gYearMonth', 'gYear', 'gMonthDay', 'gDay', 'Month', 
-        'base64Binary', 'hexBinary', 'anyUri', 'normalizedString', 'token', 'NMTOKEN', 
+        'base64Binary', 'hexBinary', 'anyURI', 'normalizedString', 'token', 'NMTOKEN', 
         'Name', 'language', 'NCName', 'ENTITY', 'IDREF', 'ID', 'NMTokens', 'Entities', 'IDREFS'
     ];
     
