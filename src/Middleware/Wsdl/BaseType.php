@@ -29,30 +29,47 @@ class BaseType extends AbstractType
     {
         switch($this->type) {
             case 'string':
-                if(count($element->nodeValue) > 0 && is_string($element->nodeValue)) {
-                    return true;
-                }return false;
+                return $this->is_string($element->nodeValue);
             case 'decimal':
-                if(count($element->nodeValue) > 0 && is_numeric($element->nodeValue)) {
-                    return true;
-                }return false;
+                return $this->is_decimal($element->nodeValue);
             case 'int':
             case 'integer':
-                if(count($element->nodeValue) > 0 && is_int($element->nodeValue)) {
-                    return true;
-                }return false;
+                return $this->is_integer($element->nodeValue);
             case 'bool':
             case 'boolean':
-                if(count($element->nodeValue) > 0 && is_bool($element->nodeValue)) {
-                    return true;
-                }return false;
-            case 'boolean':
-                if(count($element->nodeValue) > 0 && is_bool($element->nodeValue)) {
-                    return true;
-                }return false;
+                return $this->is_boolean($element->nodeValue);
             default:
                 return true;
         }
+    }
+    
+    private function is_string($value)
+    {
+        return is_string($value) && $value != null;
+    }
+    
+    private function is_decimal($value)
+    {
+        return is_numeric($value);
+    }
+    
+    private function is_integer($value)
+    {
+        if(is_int($value)) {
+            return true;
+        }
+        if(!is_string($value)) {
+            return false;
+        }
+        if(ctype_digit($value)) {
+            return true;
+        }
+        return false;
+    }
+    
+    private function is_boolean($value)
+    {
+        return $value === 'false' || $value === 'true' || $value === '0' || $value === '1';
     }
 
 }
