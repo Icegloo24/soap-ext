@@ -14,15 +14,27 @@ class SimpleType extends AbstractType
     public function __construct(DOMElement $complex, $ns)
     {
         parent::__construct($complex, $ns);
-        $node = $complex->getElementsByTagName('restriction')->item(0);
-        if(null != $node) {
-            foreach($node->attributes as $attr) {
-                if($attr->name == 'base') {
-                    if(strpos($attr->nodeValue, ':')) {
-                        $splitted = explode(':', $attr->nodeValue);
-                        $this->restriction = ['ns'=>$complex->lookupNamespaceUri($splitted[0]), 'name'=>$splitted[1]];
-                    }else {
-                        $this->restriction = ['ns'=>$this->ns, 'name'=>$attr->nodeValue];
+        foreach($complex->attributes as $attr) {
+            if($attr->name == 'base') {
+                if(strpos($attr->nodeValue, ':')) {
+                    $splitted = explode(':', $attr->nodeValue);
+                    $this->restriction = ['ns'=>$complex->lookupNamespaceUri($splitted[0]), 'name'=>$splitted[1]];
+                }else {
+                    $this->restriction = ['ns'=>$this->ns, 'name'=>$attr->nodeValue];
+                }
+            }
+        }
+        if(!isset($this->restriction)) {
+            $node = $complex->getElementsByTagName('restriction')->item(0);
+            if(null != $node) {
+                foreach($node->attributes as $attr) {
+                    if($attr->name == 'base') {
+                        if(strpos($attr->nodeValue, ':')) {
+                            $splitted = explode(':', $attr->nodeValue);
+                            $this->restriction = ['ns'=>$complex->lookupNamespaceUri($splitted[0]), 'name'=>$splitted[1]];
+                        }else {
+                            $this->restriction = ['ns'=>$this->ns, 'name'=>$attr->nodeValue];
+                        }
                     }
                 }
             }
@@ -39,7 +51,8 @@ class SimpleType extends AbstractType
     
     public function validate(DOMElement $element, ValidatorInterface $validator): bool
     {
-        $valide = false;
+        $valide =   empty($this->enumerations) && 
+                    $this->restriction->validate($element, $validator);
         
         foreach($this->enumerations as $enum) {
             if($enum == $element->nodeValue) {

@@ -11,11 +11,12 @@
 		<xsd:complexContent>
 			<xsd:sequence>
 				<xsd:element name="Test" type="Test" nillable="true" minOccurs="1" maxOccurs="1"/>
+				<xsd:element name="Test_9" type="Test" nillable="true" minOccurs="0" maxOccurs="1"/>
 			</xsd:sequence>
 		</xsd:complexContent>
 	</xsd:complexType>
 	<xsd:simpleType name="Test">
-		<xsd:restriction base="xsd:string">
+		<xsd:restriction base="xsd:integer">
 			<xsd:enumeration value="0"/>
 			<xsd:enumeration value="1"/>
 		</xsd:restriction>

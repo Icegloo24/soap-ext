@@ -31,7 +31,7 @@ class Wsdl {
     
     private $namespaceElements;
     
-    public function __construct(string $content)
+    public function __construct(string $content=null)
     {
         $this->toIncludes = [];
         $this->included = [];
@@ -39,34 +39,36 @@ class Wsdl {
         $this->namespaceElements = ['http://www.w3.org/2001/XMLSchema'=>new Schema('http://www.w3.org/2001/XMLSchema')];
         
         $this->wsdl = new DOMDocument('1.0');
-        $this->wsdl->loadXML($content);
+        if($content != null) {
+            $this->wsdl->loadXML($content);
         
-        $xpath = new DOMXPath($this->wsdl);
-        $pfx_xml_schema = strlen($pfx_xml_schema = $this->wsdl->lookupPrefix(self::$NS_XML_SCHEMA))?$pfx_xml_schema:self::$PFX_XML_SCHEMA;
-        $pfx_wsdl_schema = strlen($pfx_wsdl_schema = $this->wsdl->lookupPrefix(self::$NS_WSDL_SCHEMA))?$pfx_wsdl_schema:self::$PFX_WSDL_SCHEMA;
-        
-        $xpath->registerNamespace($pfx_xml_schema, self::$NS_XML_SCHEMA);
-        $xpath->registerNamespace($pfx_wsdl_schema, self::$NS_WSDL_SCHEMA);
-        // Get includes/imports
-        $query = './/'.$pfx_xml_schema.':include | .//'.$pfx_xml_schema.':import';
-        $query .= ' | .//'.$pfx_wsdl_schema.':include | .//'.$pfx_wsdl_schema.':import';
-        
-        $nodes = $xpath->query($query);
-        if ($nodes->length > 0) {
-            foreach ($nodes as $node) {
-                $location = $node->getAttribute('schemaLocation');
-                if(strlen($location)) {
-                    $this->toIncludes['schemaLocation'] = $location;
+            $xpath = new DOMXPath($this->wsdl);
+            $pfx_xml_schema = strlen($pfx_xml_schema = $this->wsdl->lookupPrefix(self::$NS_XML_SCHEMA))?$pfx_xml_schema:self::$PFX_XML_SCHEMA;
+            $pfx_wsdl_schema = strlen($pfx_wsdl_schema = $this->wsdl->lookupPrefix(self::$NS_WSDL_SCHEMA))?$pfx_wsdl_schema:self::$PFX_WSDL_SCHEMA;
+            
+            $xpath->registerNamespace($pfx_xml_schema, self::$NS_XML_SCHEMA);
+            $xpath->registerNamespace($pfx_wsdl_schema, self::$NS_WSDL_SCHEMA);
+            // Get includes/imports
+            $query = './/'.$pfx_xml_schema.':include | .//'.$pfx_xml_schema.':import';
+            $query .= ' | .//'.$pfx_wsdl_schema.':include | .//'.$pfx_wsdl_schema.':import';
+            
+            $nodes = $xpath->query($query);
+            if ($nodes->length > 0) {
+                foreach ($nodes as $node) {
+                    $location = $node->getAttribute('schemaLocation');
+                    if(strlen($location)) {
+                        $this->toIncludes['schemaLocation'] = $location;
+                    }
                 }
             }
-        }
-        // Get URI
-        $pfx_wsdl_soap = strlen($pfx_wsdl_soap = $this->wsdl->lookupPrefix(self::$NS_WSDL_SOAP))?$pfx_wsdl_soap:self::$PFX_WSDL_SOAP;
-        $query = './/'.$pfx_wsdl_soap.':address';
-        $nodes = $xpath->query($query);
-        if ($nodes->length > 0) {
-            foreach ($nodes as $node) {
-                $this->uri = $node->getAttribute('location');
+            // Get URI
+            $pfx_wsdl_soap = strlen($pfx_wsdl_soap = $this->wsdl->lookupPrefix(self::$NS_WSDL_SOAP))?$pfx_wsdl_soap:self::$PFX_WSDL_SOAP;
+            $query = './/'.$pfx_wsdl_soap.':address';
+            $nodes = $xpath->query($query);
+            if ($nodes->length > 0) {
+                foreach ($nodes as $node) {
+                    $this->uri = $node->getAttribute('location');
+                }
             }
         }
     }
