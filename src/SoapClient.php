@@ -8,7 +8,6 @@ use SoapExt\Middleware\Interfaces\CachingInterface;
 use SoapExt\Middleware\Interfaces\CurlInterface;
 use SoapExt\Middleware\Interfaces\RequestBuilderInterface;
 use SoapExt\Middleware\Interfaces\WsdlLoaderInterface;
-use SoapExt\Middleware\Native\Cache;
 use SoapExt\Middleware\Native\RequestBuilder;
 use SoapExt\Middleware\Interfaces\ValidatorInterface;
 use SoapExt\Middleware\Interfaces\SignatureMakerInterface;
@@ -40,7 +39,6 @@ final class SoapClient {
         
         if(!is_array($middleware)) {
             $this->appendCurl(new Curl($options));
-            //$this->appendCaching(new Cache());
             $this->appendWsdlLoader(new WsdlLoader());
             $this->appendRequestBuilder(new RequestBuilder());
             $this->appendRequestAdjustment(new RequestAdjustment());
@@ -129,12 +127,16 @@ final class SoapClient {
     
     public final function __call($function_name, $arguments)
     {
-        if($this->requestBuilder != null) {
-            $this->__setLastRequest($this->requestBuilder->buildRequest($arguments, $this->soapHeaders, $this->wsdl));
-            return $this->__doRequest($this->__getLastRequest(), $this->__getLocation(), $this->__getOperations($function_name), $this->soap_version);
+        if(is_string($arguments)) {
+            $this->__setLastRequest($arguments);
         }else {
-            throw new SoapExtFault("SOAP", "SOAP-ERROR: Couldn't load the request properly. RequestBuilder is not defined.");
+            if($this->requestBuilder != null) {
+                $this->__setLastRequest($this->requestBuilder->buildRequest($arguments, $this->soapHeaders, $this->wsdl));
+            }else {
+                throw new SoapExtFault("SOAP", "SOAP-ERROR: Couldn't load the request properly. RequestBuilder is not defined.");
+            }
         }
+        return $this->__doRequest($this->__getLastRequest(), $this->__getLocation(), $this->__getOperations($function_name), $this->soap_version);
     }
     
     
