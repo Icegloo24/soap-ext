@@ -88,7 +88,7 @@ class Wsdl {
         $dom = new DOMDocument('1.0');
         $dom->loadXML($content);
         $this->included[$ns] = $dom;
-        $this->schemes[$ns] = new Schema($ns, $dom);
+        $this->schemes[$ns] = new Schema($ns, $dom, $this);
         
         $xpath = new DOMXPath($dom);
         $pfx_xml_schema = strlen($pfx_xml_schema = $this->wsdl->lookupPrefix(self::$NS_XML_SCHEMA))?$pfx_xml_schema:self::$PFX_XML_SCHEMA;
@@ -115,7 +115,8 @@ class Wsdl {
      *
      * @return string
      */
-    public function getUri(): string {
+    public function getUri():string
+    {
         return $this->uri;
     }
     
@@ -124,7 +125,8 @@ class Wsdl {
      *
      * @return array
      */
-    public function getIncluded(): array {
+    public function getIncluded():array
+    {
         return $this->included;
     }
     
@@ -133,7 +135,8 @@ class Wsdl {
      *
      * @return array
      */
-    public function getNextToInclude(): array {
+    public function getNextToInclude():array
+    {
         foreach($this->toIncludes as $key => $value) {
             return [$key => $value];
         }
@@ -145,7 +148,7 @@ class Wsdl {
      *
      * @return array
      */
-    public function getOperations(): array
+    public function getOperations():array
     {
         $methods = array();
         
@@ -211,7 +214,7 @@ class Wsdl {
             if($child->localName != '') {
                 $valide = $valide && $this->getType($this->extractTypeNs($child), $this->extractType($child))->validate($child, $validator);
             }
-        }//echo json_encode($validator->getErrors())."\n\n";
+        }
         return $valide;
     }
     

@@ -12,7 +12,7 @@ class Schema
     private $type;
     private $accessor;
     
-    public function __construct(string $ns, DOMDocument $doc=null)
+    public function __construct(string $ns, DOMDocument $doc=null, Wsdl $wsdl=null)
     {
         $this->ns = $ns;
         $this->type = [];
@@ -51,7 +51,7 @@ class Schema
         $this->accessor[$name][] = $wsdl->getType($type_ns, $type);
     }
     
-    public function getAccessor($name): array
+    public function getAccessor($name):array
     {
         return $this->accessor[$name]??[];
     }

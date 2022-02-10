@@ -127,21 +127,18 @@ class ComplexType extends AbstractType
         if(isset($this->extension)) {
             $this->extension = $wsdl->getType($this->extension['ns'], $this->extension['name']);
         }
+        
         $sequences = [];
-        //echo "\n".$this->getName();
         foreach($this->sequences as $info) {
-            //echo ' +';
-            $sequences[] = 
-                [
-                    'complex'=>$wsdl->getType($info['type_ns']??$this->ns, $info['type']),
-                    'min'=>$info['min']??0,
-                    'max'=>$info['max']??0,
-                    'name'=>$info['name'],
-                    'name_ns'=>$info['name_ns']??$this->ns
-                ];
-                $wsdl->appendAccessor($info['name_ns'], $info['name'], $info['type_ns'], $info['type']);
+            $sequences[] = [
+                'complex'=>$wsdl->getType($info['type_ns']??$this->ns, $info['type']),
+                'min'=>$info['min']??0,
+                'max'=>$info['max']??0,
+                'name'=>$info['name'],
+                'name_ns'=>$info['name_ns']??$this->ns
+            ];
+            $wsdl->appendAccessor($info['name_ns'], $info['name'], $info['type_ns'], $info['type']);
         }
-        //echo "\n  ->".json_encode($sequences)."\n";
         $this->sequences = $sequences;
     }
     
