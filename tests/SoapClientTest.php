@@ -30,7 +30,7 @@ class SoapClientTest extends TestCase {
         $this->assertTrue(true);
     }
     
-    /*public function testSoapCall()
+    public function testSoapCall()
     {
         
         $client = new SoapClient($this->wsdl, $this->options, 
@@ -45,7 +45,7 @@ class SoapClientTest extends TestCase {
         //print "\n".$client->__getLastRequest();
         $this->assertNotEmpty($client->__getLastRequest());
         
-    }*/
+    }
     
 }
 

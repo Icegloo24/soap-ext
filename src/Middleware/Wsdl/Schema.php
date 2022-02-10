@@ -48,7 +48,9 @@ class Schema
         if(!isset($this->accessor[$name])) {
             $this->accessor[$name] = [];
         }
-        $this->accessor[$name][] = $wsdl->getType($type_ns, $type);
+        if(!in_array($wsdl->getType($type_ns, $type), $this->accessor[$name])) {
+            $this->accessor[$name][] = $wsdl->getType($type_ns, $type);
+        }
     }
     
     public function getAccessor($name):array

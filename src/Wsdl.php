@@ -212,7 +212,49 @@ class Wsdl {
         $valide = true;
         foreach($element->childNodes as $child) {
             if($child->localName != '') {
-                $valide = $valide && $this->getType($this->extractTypeNs($child), $this->extractType($child))->validate($child, $validator);
+                $accessors = $this->getAccessor($this->extractNs($child), $this->extractName($child));
+                if(count($accessors) > 1) {
+                    $type = $this->getType($this->extractTypeNs($child), $this->extractType($child));
+                    if($this->extractTypeNs($child) == null || $this->extractType($child) == null) {
+                        $validator->appendError(
+                            "Error at Line '".$child->getLineNo().
+                            "' :: Node with Name:'".$this->extractNs($child).":".$this->extractName($child).
+                            "' Type has multiple accessors and needs to be defined!");
+                    }
+                }elseif(count($accessors) == 1) {
+                    $type = $accessors[0];
+                    if($this->extractTypeNs($child) != null && $this->extractType($child) != null) {
+                        $type = $this->getType($this->extractTypeNs($child), $this->extractType($child));
+                    }
+                }else {
+                    $type = $this->getType($this->extractTypeNs($child), $this->extractType($child));
+                    if(!isset($type)) {
+                        $validator->appendError(
+                            "Error at Line '".$child->getLineNo().
+                            "' :: Node with Name:'".$this->extractNs($child).":".$this->extractName($child).
+                            "' is not defined in Schema!");
+                    }
+                }
+                
+                if(isset($type)) {
+                    if(!in_array($type, $accessors) && count($accessors) > 0) {
+                        $valide = false;
+                        $validator->appendError(
+                            "Error at Line '".$child->getLineNo().
+                            "' :: Node with Name:'".$this->extractNs($child).":".$this->extractName($child).
+                            "' of Type:'".$type->getNamespace().":".$type->getName()."' is not defined for accessor!");
+                    }else {
+                        $valide = $valide && $type->validate($child, $validator);
+                    }
+                }else {
+                    $valide = false;
+                    if($this->extractTypeNs($child) == null || $this->extractType($child) == null) {
+                        $validator->appendError(
+                            "Error at Line '".$child->getLineNo().
+                            "' :: Node with Name:'".$this->extractNs($child).":".$this->extractName($child).
+                            "' Type is 'unknown'!");
+                    }
+                }
             }
         }
         return $valide;

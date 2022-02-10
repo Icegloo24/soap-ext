@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns="http://www.test123.uri/1" xmlns:n0="http://www.test123.uri/0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<xsd:schema xmlns="http://www.test123.uri/1" xmlns:ns0="http://www.test123.uri/0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 	<xsd:import namespace="http://www.test123.uri/0" schemaLocation="import_0.xsd"/>
 	<xsd:complexType name="Test_1" abstract="false">
 		<xsd:complexContent>
-			<xsd:extension base="n0:Base">
+			<xsd:extension base="ns0:Base">
 				<xsd:sequence>
-					<xsd:element name="Test" type="n0:Test_0" nillable="true" minOccurs="0" maxOccurs="1"/>
+					<xsd:element name="ns0:Test" type="ns0:Test_0" nillable="true" minOccurs="0" maxOccurs="1"/>
+					<xsd:element name="Test" type="Test_1" nillable="true" minOccurs="0" maxOccurs="1"/>
 				</xsd:sequence>
 			</xsd:extension>
 		</xsd:complexContent>

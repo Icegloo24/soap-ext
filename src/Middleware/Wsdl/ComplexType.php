@@ -86,14 +86,30 @@ class ComplexType extends AbstractType
             $childNodes = [];
             
             foreach($info['name_ns']!=null?$element->getElementsByTagNameNS($info['name_ns'], $info['name']):$element->getElementsByTagName($info['name']) as $child) {
-                $accessors = $this->wsdl->getAccessor($this->extractNs($child), $this->extractName($child));
-                if(count($accessors) > 1) {
-                    if($this->extractTypeNs($child) == $info['complex']->getNamespace() && $this->extractType($child) == $info['complex']->getName() && $child->parentNode === $element) {
+                if($child->parentNode === $element) {
+                    $accessors = $this->wsdl->getAccessor($this->extractNs($child), $this->extractName($child));
+                    if(count($accessors) > 1) {
+                        if($this->extractTypeNs($child) == null || $this->extractType($child) == null) {
+                            $validator->appendError(
+                                "Error at Line '".$child->getLineNo().
+                                "' :: Node with Name:'".$this->extractNs($child).":".$this->extractName($child).
+                                "' Type has multiple accessors and needs to be defined!");
+                        }
+                        $type = $this->wsdl->getType($this->extractTypeNs($child), $this->extractType($child));
+                        if($info['complex'] == $type && $child->parentNode === $element) {
+                            $childNodes[] = $child;
+                        }
+                    }elseif(count($accessors) == 1) {
+                        $type = $accessors[0];
+                        if($this->extractTypeNs($child) != null && $this->extractType($child) != null) {
+                            $type = $this->wsdl->getType($this->extractTypeNs($child), $this->extractType($child));
+                        }
                         $childNodes[] = $child;
-                    }
-                }else {
-                    if($child->parentNode === $element) {
-                        $childNodes[] = $child;
+                    }else {
+                        $validator->appendError(
+                            "Error at Line '".$child->getLineNo().
+                            "' :: Node with Name:'".$this->extractNs($child).":".$this->extractName($child).
+                            "' is not defined in Schema!");
                     }
                 }
             }
@@ -107,7 +123,6 @@ class ComplexType extends AbstractType
                     "' :: Too Many/Few '".count($childNodes)."' Nodes with Name:'".$info['name_ns'].":".$info['name'].
                     "' of Type:'".$info['complex']->getNamespace().":".$info['complex']->getName()."'!");
             }else {
-                //echo "\n";
                 foreach($childNodes as $childNode) {
                     $valide = $valide && $info['complex']->validate($childNode, $validator);
                 }
