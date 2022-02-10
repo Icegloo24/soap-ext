@@ -29,14 +29,14 @@ class Wsdl {
     private $included;
     private $nsMap;
     
-    private $namespaceElements;
+    private $schemes;
     
     public function __construct(string $content=null)
     {
         $this->toIncludes = [];
         $this->included = [];
         $this->nsMap = [];
-        $this->namespaceElements = ['http://www.w3.org/2001/XMLSchema'=>new Schema('http://www.w3.org/2001/XMLSchema')];
+        $this->schemes = ['http://www.w3.org/2001/XMLSchema'=>new Schema('http://www.w3.org/2001/XMLSchema')];
         
         $this->wsdl = new DOMDocument('1.0');
         if($content != null) {
@@ -88,7 +88,7 @@ class Wsdl {
         $dom = new DOMDocument('1.0');
         $dom->loadXML($content);
         $this->included[$ns] = $dom;
-        $this->namespaceElements[$ns] = new Schema($ns, $dom);
+        $this->schemes[$ns] = new Schema($ns, $dom);
         
         $xpath = new DOMXPath($dom);
         $pfx_xml_schema = strlen($pfx_xml_schema = $this->wsdl->lookupPrefix(self::$NS_XML_SCHEMA))?$pfx_xml_schema:self::$PFX_XML_SCHEMA;
@@ -180,16 +180,26 @@ class Wsdl {
         return $this->nsMap;
     }
     
-    public function getContent(string $ns, string $name):?AbstractType
+    public function getType(?string $type_ns, ?string $type):?AbstractType
     {
-        if(isset($this->namespaceElements[$ns])) {
-            return $this->namespaceElements[$ns]->getContent($name);
+        if(isset($this->schemes[$type_ns])) {
+            return $this->schemes[$type_ns]->getType($type);
         }return null;
+    }
+    
+    public function appendAccessor($ns, $accessor, $type_ns, $type)
+    {
+        $this->schemes[$ns]->appendAccessor($this, $accessor, $type, $type_ns);
+    }
+    
+    public function getAccessor($ns, $accessor):array
+    {
+        return $this->schemes[$ns]->getAccessor($accessor);
     }
     
     public function link()
     {
-        foreach($this->namespaceElements as &$schema) {
+        foreach($this->schemes as &$schema) {
             $schema->link($this);
         }
     }
@@ -199,7 +209,7 @@ class Wsdl {
         $valide = true;
         foreach($element->childNodes as $child) {
             if($child->localName != '') {
-                $valide = $valide && $this->getContent($this->getTypeNs($child), $this->getType($child))->validate($child, $validator);
+                $valide = $valide && $this->getType($this->extractTypeNs($child), $this->extractType($child))->validate($child, $validator);
             }
         }//echo json_encode($validator->getErrors())."\n\n";
         return $valide;

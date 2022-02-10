@@ -13,6 +13,7 @@ class ComplexType extends AbstractType
     
     private $extension;
     private $sequences;
+    private $wsdl;
     
     public function __construct(DOMElement $complex, $ns)
     {
@@ -46,6 +47,7 @@ class ComplexType extends AbstractType
                                     $info['name_ns'] = $complex->lookupNamespaceUri($splitted[0]);
                                     $info['name'] = $splitted[1];
                                 }else {
+                                    $info['name_ns'] = $this->getNamespace();
                                     $info['name'] = $attr->nodeValue;
                                 }
                                 break;
@@ -55,6 +57,7 @@ class ComplexType extends AbstractType
                                     $info['type_ns'] = $complex->lookupNamespaceUri($splitted[0]);
                                     $info['type'] = $splitted[1];
                                 }else {
+                                    $info['type_ns'] = $this->getNamespace();
                                     $info['type'] = $attr->nodeValue;
                                 }
                                 break;
@@ -77,22 +80,31 @@ class ComplexType extends AbstractType
     public function validate(DOMElement $element, ValidatorInterface $validator): bool
     {
         //echo $this->getName().'->';
-        
         $valide = true;
         foreach($this->sequences as $info) {
             //echo json_encode($info);
-            //$childNodes = $info['name_ns']!=null?$element->getElementsByTagNameNS($info['name_ns'], $info['name']):$element->getElementsByTagName($info['name']);
             $childNodes = [];
+            
             foreach($info['name_ns']!=null?$element->getElementsByTagNameNS($info['name_ns'], $info['name']):$element->getElementsByTagName($info['name']) as $child) {
-                if($this->getTypeNs($child) == $info['complex']->getNamespace() && $this->getType($child) == $info['complex']->getName() && $child->parentNode === $element) {
-                    $childNodes[] = $child;
+                $accessors = $this->wsdl->getAccessor($this->extractNs($child), $this->extractName($child));
+                if(count($accessors) > 1) {
+                    if($this->extractTypeNs($child) == $info['complex']->getNamespace() && $this->extractType($child) == $info['complex']->getName() && $child->parentNode === $element) {
+                        $childNodes[] = $child;
+                    }
+                }else {
+                    if($child->parentNode === $element) {
+                        $childNodes[] = $child;
+                    }
                 }
             }
+            
+            
+            
             if(count($childNodes) < $info['min'] || count($childNodes) > ($info['max']!=0?$info['max']:9999)) {
                 $valide = false;
                 $validator->appendError(
                     "Error at Line '".$element->getLineNo().
-                    "' :: Too Many/Few Nodes with Name:'".$info['name_ns'].":".$info['name'].
+                    "' :: Too Many/Few '".count($childNodes)."' Nodes with Name:'".$info['name_ns'].":".$info['name'].
                     "' of Type:'".$info['complex']->getNamespace().":".$info['complex']->getName()."'!");
             }else {
                 //echo "\n";
@@ -102,7 +114,6 @@ class ComplexType extends AbstractType
             }
         }
         if($this->extension != null) {
-            //echo "\n";
             $valide = $valide && $this->extension->validate($element, $validator);
         }
         
@@ -112,23 +123,25 @@ class ComplexType extends AbstractType
     
     public function link(Wsdl $wsdl)
     {
+        $this->wsdl = $wsdl;
         if(isset($this->extension)) {
-            $this->extension = $wsdl->getContent($this->extension['ns'], $this->extension['name']);
+            $this->extension = $wsdl->getType($this->extension['ns'], $this->extension['name']);
         }
         $sequences = [];
-        //echo ','.$this->getName();
+        //echo "\n".$this->getName();
         foreach($this->sequences as $info) {
-            //echo '+';
+            //echo ' +';
             $sequences[] = 
                 [
-                    'complex'=>$wsdl->getContent($info['type_ns']??$this->ns, $info['type']),
-                    'min'=>$info['min']??0, 
+                    'complex'=>$wsdl->getType($info['type_ns']??$this->ns, $info['type']),
+                    'min'=>$info['min']??0,
                     'max'=>$info['max']??0,
                     'name'=>$info['name'],
                     'name_ns'=>$info['name_ns']??$this->ns
                 ];
+                $wsdl->appendAccessor($info['name_ns'], $info['name'], $info['type_ns'], $info['type']);
         }
-        //echo '->'.json_encode($sequences);
+        //echo "\n  ->".json_encode($sequences)."\n";
         $this->sequences = $sequences;
     }
     

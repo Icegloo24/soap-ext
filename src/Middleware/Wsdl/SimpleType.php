@@ -71,7 +71,7 @@ class SimpleType extends AbstractType
     public function link(Wsdl $wsdl)
     {
         if(isset($this->restriction)) {
-            $this->restriction = $wsdl->getContent($this->restriction['ns'], $this->restriction['name']);
+            $this->restriction = $wsdl->getType($this->restriction['ns'], $this->restriction['name']);
         }
     }
 

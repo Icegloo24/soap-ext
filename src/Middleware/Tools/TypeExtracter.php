@@ -7,7 +7,17 @@ use DOMElement;
 trait TypeExtracter
 {
     
-    protected function getType(DOMElement $element)
+    protected function extractName(DOMElement $element)
+    {
+        return $element->tagName;
+    }
+    
+    protected function extractNs(DOMElement $element)
+    {
+        return $element->namespaceURI;
+    }
+    
+    protected function extractType(DOMElement $element)
     {
         foreach($element->attributes as $attr) {
             /**@var DOMAttr $attr */
@@ -17,7 +27,7 @@ trait TypeExtracter
         }
     }
     
-    protected function getTypeNs(DOMElement $element)
+    protected function extractTypeNs(DOMElement $element)
     {
         foreach($element->attributes as $attr) {
             /**@var DOMAttr $attr */
