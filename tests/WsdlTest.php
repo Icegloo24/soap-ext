@@ -25,7 +25,7 @@ class WsdlTest extends TestCase {
         $this->assertEquals("https://localhost:8080/services/testservice", $wsdl->getUri());
         $this->assertEquals('{"Test":"urn:Test"}', json_encode($wsdl->getOperations()));
         
-        $this->assertEquals(["schemaLocation"=>"import_controller.xsd"], $wsdl->getNextToInclude());
+        $this->assertEquals(["schemaLocation"=>"import_controller.xsd"], $wsdl->getToIncludes());
         
         $wsdl->appendNs("schemaLocation", $this->cache->getContent("import_controller.xsd"));
         
@@ -39,7 +39,7 @@ class WsdlTest extends TestCase {
         
         $this->assertEquals(3, count($wsdl->getIncluded()));
         
-        $this->assertEquals([], $wsdl->getNextToInclude());
+        $this->assertEquals([], $wsdl->getToIncludes());
     }
     
 }

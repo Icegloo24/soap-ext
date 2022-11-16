@@ -56,8 +56,9 @@ class Wsdl {
             if ($nodes->length > 0) {
                 foreach ($nodes as $node) {
                     $location = $node->getAttribute('schemaLocation');
+                    $namespace = $node->hasAttribute('namespace')?$node->getAttribute('namespace'):'schemaLocation';
                     if(strlen($location)) {
-                        $this->toIncludes['schemaLocation'] = $location;
+                        $this->toIncludes[$namespace] = $location;
                     }
                 }
             }
@@ -81,33 +82,36 @@ class Wsdl {
      */
     public function appendNs(string $ns, string $content)
     {
-        if(key_exists($ns, $this->toIncludes)) {
-            $this->nsMap[$ns] = $this->toIncludes[$ns];
-            unset($this->toIncludes[$ns]);
-        }
-        $dom = new DOMDocument('1.0');
-        $dom->loadXML($content);
-        $this->included[$ns] = $dom;
-        $this->schemes[$ns] = new Schema($ns, $dom, $this);
-        
-        $xpath = new DOMXPath($dom);
-        $pfx_xml_schema = strlen($pfx_xml_schema = $this->wsdl->lookupPrefix(self::$NS_XML_SCHEMA))?$pfx_xml_schema:self::$PFX_XML_SCHEMA;
-        $xpath->registerNamespace($pfx_xml_schema, self::$NS_XML_SCHEMA);
-        
-        $includes = [];
-        $query = './/'.$pfx_xml_schema.':include | .//'.self::$PFX_XML_SCHEMA.':import';
-        $nodes = $xpath->query($query);
-        if ($nodes->length > 0) {
-            foreach ($nodes as $node) {
-                $location = $node->getAttribute('schemaLocation');
-                $namespace = $node->getAttribute('namespace');
-                if(!key_exists($namespace, $this->included)) {
-                    $this->toIncludes[$namespace] = $location;
-                    $includes[$namespace] = $location;
+        if(!isset($this->included[$ns])) {
+            if(key_exists($ns, $this->toIncludes)) {
+                $this->nsMap[$ns] = $this->toIncludes[$ns];
+                unset($this->toIncludes[$ns]);
+            }
+            $dom = new DOMDocument('1.0');
+            $dom->loadXML($content);
+            $this->included[$ns] = $dom;
+            $this->schemes[$ns] = new Schema($ns, $dom, $this);
+            
+            $xpath = new DOMXPath($dom);
+            $pfx_xml_schema = strlen($pfx_xml_schema = $this->wsdl->lookupPrefix(self::$NS_XML_SCHEMA))?$pfx_xml_schema:self::$PFX_XML_SCHEMA;
+            $xpath->registerNamespace($pfx_xml_schema, self::$NS_XML_SCHEMA);
+            
+            $includes = [];
+            $query = './/'.$pfx_xml_schema.':include | .//'.self::$PFX_XML_SCHEMA.':import';
+            $nodes = $xpath->query($query);
+            if ($nodes->length > 0) {
+                foreach ($nodes as $node) {
+                    $location = $node->getAttribute('schemaLocation');
+                    $namespace = $node->getAttribute('namespace');
+                    if(!key_exists($namespace, $this->included)) {
+                        $this->toIncludes[$namespace] = $location;
+                        $includes[$namespace] = $location;
+                    }
                 }
             }
+            return $includes;
         }
-        return $includes;
+        return [];
     }
     
     /**
@@ -131,16 +135,13 @@ class Wsdl {
     }
     
     /**
-     * Returns one [key=>value] pair of the next Namespace=>SchemaLocation to include into the Wsdl.
+     * Returns all [key=>value] pairs of the next Namespace=>SchemaLocation to include into the Wsdl.
      *
      * @return array
      */
-    public function getNextToInclude():array
+    public function getToIncludes():array
     {
-        foreach($this->toIncludes as $key => $value) {
-            return [$key => $value];
-        }
-        return [];
+        return $this->toIncludes;
     }
     
     /**

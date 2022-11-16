@@ -20,12 +20,12 @@ class WsdlLoader implements WsdlLoaderInterface {
         if($curl == null) {
             throw new SoapExtFault("HTTP", "SOAP-ERROR: Parsing WSDL: Couldn't load from '$wsdl'! Http-Error: No Curl Object available!");
         }
-        if($curl->execute($wsdl)) {
+        if($curl->execute($wsdl) && $curl->getLastResponseBody() != '') {
             
             $content = $curl->getLastResponseBody();
             $this->wsdl = new Wsdl($content);
             
-            foreach($this->wsdl->getNextToInclude() as $ns => $uri) {
+            foreach($this->wsdl->getToIncludes() as $ns => $uri) {
                 $this->downloadIncluded($ns, $curl->resolveUri($wsdl, $uri), $curl);
             }
             $this->wsdl->link();
@@ -38,7 +38,7 @@ class WsdlLoader implements WsdlLoaderInterface {
     
     private function downloadIncluded($namespace, $localisation, CurlInterface $curl)
     {
-        if($curl->execute($localisation)) {
+        if($curl->execute($localisation) && $curl->getLastResponseBody() != '') {
             
             $content = $curl->getLastResponseBody();
             
@@ -57,7 +57,7 @@ class WsdlLoader implements WsdlLoaderInterface {
             if($cache->hasFile($wsdl)) {
                 $this->wsdl = new Wsdl($cache->getContent($wsdl));
                 
-                foreach($this->wsdl->getNextToInclude() as $ns => $uri) {
+                foreach($this->wsdl->getToIncludes() as $ns => $uri) {
                     $this->loadIncluded($ns, $uri, $cache);
                 }
                 $this->wsdl->link();
