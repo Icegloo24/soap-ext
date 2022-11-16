@@ -10,21 +10,29 @@ class Schema
     private $ns;
     
     private $type;
+    private $element;
     private $accessor;
     
     public function __construct(string $ns, DOMDocument $doc=null, Wsdl $wsdl=null)
     {
         $this->ns = $ns;
         $this->type = [];
+        $this->element = [];
         $this->accessor = [];
         if($doc != null) {
             foreach($doc->getElementsByTagName("complexType") as $complex) {
-                $complexType = new ComplexType($complex, $this->ns);
-                $this->type[$complexType->getName()] = $complexType;
+                $type = new ComplexType($complex, $this->ns);
+                $this->type[$type->getName()] = $type;
             }
             foreach($doc->getElementsByTagName("simpleType") as $complex) {
-                $complexType = new SimpleType($complex, $this->ns);
-                $this->type[$complexType->getName()] = $complexType;
+                $type = new SimpleType($complex, $this->ns);
+                $this->type[$type->getName()] = $type;
+            }
+            foreach($doc->getElementsByTagName("element") as $complex) {
+                if($complex->parentNode->localName == 'schema') {
+                    $element = new Element($complex, $this->ns);
+                    $this->element[$element->getName()] = $element;
+                }
             }
         }else {
             foreach(BaseType::$DATA_TYPES as $type) {
@@ -62,6 +70,9 @@ class Schema
     {
         foreach($this->type as &$complexType) {
             $complexType->link($wsdl);
+        }
+        foreach($this->element as &$element) {
+            $element->link($wsdl);
         }
     }
     
