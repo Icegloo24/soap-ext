@@ -66,6 +66,7 @@ class Curl implements CurlInterface
             CURLOPT_HEADER => true,
             CURLOPT_USERAGENT => $options['user_agent'],
             CURLINFO_HEADER_OUT => true,
+            CURLOPT_FOLLOWLOCATION => true
         );
         curl_setopt_array($this->ch, $curlOptions);
         
