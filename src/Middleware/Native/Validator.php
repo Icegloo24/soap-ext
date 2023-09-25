@@ -28,8 +28,12 @@ class Validator implements ValidatorInterface
     public function validate(string $request, Wsdl $wsdl): bool
     {
         $dom = new \DOMDocument('1.0');
+        $dom->strictErrorChecking = true;
         try {
-            $dom->loadXML($request);
+            if(!$dom->loadXML($request)) {
+                $this->appendError('Could not load DOMDocument due to problems in Syntax');
+                return false;
+            }
         }catch(\Exception $e) {
             $this->appendError($e->getMessage());
             return false;
@@ -37,6 +41,11 @@ class Validator implements ValidatorInterface
         if($wsdl == null) {
             throw new SoapExtFault('DOM', 'WSDL should not be NULL');
         }
+//         if($dom->getElementsByTagName('Body')->item(0) == null) {
+//             echo "\n\n request: \n".$request;
+//             echo "\n dom: \n".$dom->C14N();
+//             return false;
+//         }
         return $wsdl->validate($dom->getElementsByTagName('Body')->item(0), $this);
     }
     

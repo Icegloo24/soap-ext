@@ -31,10 +31,6 @@ class ValidatorTest extends TestCase
     {
         $wsdl = $this->loader->loadWsdl("wsdl.wsdl", $this->cache);
         
-        /*$this->validator = new Validator();
-        $this->validator->validate(file_get_contents(__DIR__."/fixtures/valide_test0.xml"), $wsdl);
-        echo "\n\n".json_encode($this->validator->getErrors())."\n\n";*/
-        
         $this->validator = new Validator();
         $this->assertTrue($this->validator->validate(file_get_contents(__DIR__."/fixtures/valide_test0.xml"), $wsdl));
         
