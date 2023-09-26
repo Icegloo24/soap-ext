@@ -57,7 +57,8 @@ class RequestBuilder implements RequestBuilderInterface {
             $this->appendAttributesToNode($dom, $value);
         }
         
-        return $dom->saveXML();
+        #return $dom->saveXML(); https://github.com/php/php-src/issues/11404
+        return $dom->C14N();
     }
     
     
