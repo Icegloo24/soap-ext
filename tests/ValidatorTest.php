@@ -27,6 +27,7 @@ class ValidatorTest extends TestCase
         //echo "\n\n";
     }
     
+    /** @group validator */
     public function testValidation()
     {
         $wsdl = $this->loader->loadWsdl("wsdl.wsdl", $this->cache);
@@ -44,6 +45,7 @@ class ValidatorTest extends TestCase
         $this->assertFalse($this->validator->validate(file_get_contents(__DIR__."/fixtures/invalide_test2.xml"), $wsdl));
     }
     
+    /** @group validator */
     public function testErrors()
     {
         $wsdl = $this->loader->loadWsdl("wsdl.wsdl", $this->cache);

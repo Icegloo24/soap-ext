@@ -28,24 +28,23 @@ class Validator implements ValidatorInterface
     public function validate(string $request, Wsdl $wsdl): bool
     {
         $dom = new \DOMDocument('1.0');
-        $dom->strictErrorChecking = true;
+        libxml_use_internal_errors(true);
         try {
             if(!$dom->loadXML($request)) {
-                $this->appendError('Could not load DOMDocument due to problems in Syntax');
+                foreach(libxml_get_errors() as $error) {
+                    /** @var \LibXMLError $error */
+                    $this->appendError($error->message.' line:'.$error->line);
+                }
                 return false;
             }
         }catch(\Exception $e) {
             $this->appendError($e->getMessage());
             return false;
         }
+        libxml_use_internal_errors(false);
         if($wsdl == null) {
             throw new SoapExtFault('DOM', 'WSDL should not be NULL');
         }
-//         if($dom->getElementsByTagName('Body')->item(0) == null) {
-//             echo "\n\n request: \n".$request;
-//             echo "\n dom: \n".$dom->C14N();
-//             return false;
-//         }
         return $wsdl->validate($dom->getElementsByTagName('Body')->item(0), $this);
     }
     

@@ -43,8 +43,8 @@ class Wsdl {
             $this->wsdl->loadXML($content);
         
             $xpath = new DOMXPath($this->wsdl);
-            $pfx_xml_schema = strlen($pfx_xml_schema = $this->wsdl->lookupPrefix(self::$NS_XML_SCHEMA))?$pfx_xml_schema:self::$PFX_XML_SCHEMA;
-            $pfx_wsdl_schema = strlen($pfx_wsdl_schema = $this->wsdl->lookupPrefix(self::$NS_WSDL_SCHEMA))?$pfx_wsdl_schema:self::$PFX_WSDL_SCHEMA;
+            $pfx_xml_schema = $this->wsdl->lookupPrefix(self::$NS_XML_SCHEMA)??self::$PFX_XML_SCHEMA;
+            $pfx_wsdl_schema = $this->wsdl->lookupPrefix(self::$NS_WSDL_SCHEMA)??self::$PFX_WSDL_SCHEMA;
             
             $xpath->registerNamespace($pfx_xml_schema, self::$NS_XML_SCHEMA);
             $xpath->registerNamespace($pfx_wsdl_schema, self::$NS_WSDL_SCHEMA);
@@ -93,7 +93,7 @@ class Wsdl {
             $this->schemes[$ns] = new Schema($ns, $dom, $this);
             
             $xpath = new DOMXPath($dom);
-            $pfx_xml_schema = strlen($pfx_xml_schema = $this->wsdl->lookupPrefix(self::$NS_XML_SCHEMA))?$pfx_xml_schema:self::$PFX_XML_SCHEMA;
+            $pfx_xml_schema = $pfx_xml_schema = $this->wsdl->lookupPrefix(self::$NS_XML_SCHEMA)??self::$PFX_XML_SCHEMA;
             $xpath->registerNamespace($pfx_xml_schema, self::$NS_XML_SCHEMA);
             
             $includes = [];
@@ -154,8 +154,8 @@ class Wsdl {
         $methods = array();
         
         $xpath = new DOMXPath($this->wsdl);
-        $pfx_xml_schema = strlen($pfx_xml_schema = $this->wsdl->lookupPrefix(self::$NS_XML_SCHEMA))?$pfx_xml_schema:self::$PFX_XML_SCHEMA;
-        $pfx_wsdl_schema = strlen($pfx_wsdl_schema = $this->wsdl->lookupPrefix(self::$NS_WSDL_SCHEMA))?$pfx_wsdl_schema:self::$PFX_WSDL_SCHEMA;
+        $pfx_xml_schema = $this->wsdl->lookupPrefix(self::$NS_XML_SCHEMA)??self::$PFX_XML_SCHEMA;
+        $pfx_wsdl_schema = $this->wsdl->lookupPrefix(self::$NS_WSDL_SCHEMA)??self::$PFX_WSDL_SCHEMA;
         $xpath->registerNamespace($pfx_xml_schema, self::$NS_XML_SCHEMA);
         $xpath->registerNamespace($pfx_wsdl_schema, self::$NS_WSDL_SCHEMA);
         
